@@ -1,0 +1,165 @@
+<!-- Submit Enquiry Page - Compact Version -->
+<section class="enquiry-section">
+  <div class="container">
+    <!-- Page Header -->
+    <div class="page-header">
+      <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+        <div>
+          <h1 class="page-title">
+            <i class="fas fa-paper-plane me-2"></i>Submit Enquiry
+          </h1>
+          <p class="page-description mb-0">
+            Fill the form below to submit your enquiry
+          </p>
+        </div>
+        <a href="#" class="btn btn-outline-secondary btn-sm">
+          <i class="fas fa-arrow-left me-1"></i>Back
+        </a>
+      </div>
+    </div>
+
+     <!-- Quick Info -->
+    <div class="row g-2 mb-2">
+      <div class="col-md-4">
+        <div class="info-card compact">
+          <i class="fas fa-clock me-2"></i>
+          <span>Response: 24 hours</span>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="info-card compact">
+          <i class="fas fa-shield-alt me-2"></i>
+          <span>100% Confidential</span>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="info-card compact">
+          <i class="fas fa-headset me-2"></i>
+          <span>Need Help? Contact Us</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Enquiry Form Card -->
+    <div class="form-card">
+      <form class="enquiry-form compact-form" [formGroup]="enquiryForm" (ngSubmit)="submitForm()">
+        <!-- Customer Information Section -->
+        <div class="form-section">
+          <h5 class="section-title">
+            <i class="fas fa-user me-2"></i>Customer Information
+          </h5>
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label class="form-label">Full Name *</label>
+              <div class="input-group">
+                <span class="input-group-text"><i class="fas fa-user"></i></span>
+                <input type="text" class="form-control" placeholder="Enter your name" required formControlName="customerName">
+              </div>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Email Address *</label>
+              <div class="input-group">
+                <span class="input-group-text"><i class="fas fa-envelope"></i></span>
+                <input type="email" class="form-control" placeholder="Enter your email" required formControlName="customerEmail">
+              </div>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Phone Number *</label>
+              <div class="input-group">
+                <span class="input-group-text"><i class="fas fa-phone"></i></span>
+                <input type="tel" class="form-control" placeholder="Enter phone number" required formControlName="customerPhone">
+              </div>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Enquiry Type *</label>
+              <select class="form-select" required formControlName="enquiryType">
+                <option value="">Select Type</option>
+                <option value="general">General Inquiry</option>
+                <option value="support">Product Support</option>
+                <option value="sales">Sales Question</option>
+                <option value="billing">Billing & Payment</option>
+                <option value="feedback">Feedback</option>
+                <option value="complaint">Complaint</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- Enquiry Details -->
+        <div class="form-section">
+          <h5 class="section-title">
+            <i class="fas fa-clipboard-list me-2"></i>Enquiry Details
+          </h5>
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label class="form-label">Category *</label>
+              <select class="form-select" required formControlName="categoryId">
+                @for (item of category(); track $index) {
+                  <option [value]="item.categoryId">{{item.categoryName}}</option>
+                }
+              </select>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Status *</label>
+              <select class="form-select" required formControlName="statusId">
+                @for (item of status(); track $index) {
+               <option [value]="item.statusId">{{item.statusName}}</option>
+                }
+              </select>
+            </div>
+            <div class="col-12">
+              <label class="form-label">Message *</label>
+              <textarea class="form-control" rows="3" placeholder="Describe your enquiry" required formControlName="message"></textarea>
+            </div>
+          </div>
+        </div>
+
+        <!-- Dates -->
+        <div class="form-section">
+          <h5 class="section-title">
+            <i class="fas fa-calendar-alt me-2"></i>Schedule
+          </h5>
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label class="form-label">Enquiry Date *</label>
+              <input type="date" class="form-control" required formControlName="enquiryDate">
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Follow-up Date</label>
+              <input type="date" required formControlName="followUpDate" class="form-control">
+            </div>
+          </div>
+        </div>
+
+        <!-- Options -->
+        <div class="form-section">
+          <div class="form-check">
+            <input class="form-check-input" formControlName="isConverted" type="checkbox" id="isConverted">
+            <label class="form-check-label" for="isConverted">
+              <strong>Convert to Lead</strong>
+              <small class="text-muted d-block">Mark as potential sales lead</small>
+            </label>
+          </div>
+        </div>
+
+        <!-- Feedback -->
+        <div class="form-section">
+          <label class="form-label">Feedback / Notes</label>
+          <textarea class="form-control" rows="2" formControlName="feedback" placeholder="Additional notes (optional)"></textarea>
+        </div>
+
+        <!-- Actions -->
+        <div class="form-actions">
+          <button type="reset" class="btn btn-outline-secondary">
+            <i class="fas fa-redo me-1"></i>Reset
+          </button>
+          <button type="submit" class="btn btn-primary">
+            <i class="fas fa-paper-plane me-1"></i>Submit
+          </button>
+        </div>
+      </form>
+    </div>
+
+   
+  </div>
+</section>

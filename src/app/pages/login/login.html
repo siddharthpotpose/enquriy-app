@@ -1,0 +1,126 @@
+<!-- Login Page - Professional & Compact -->
+<div class="login-wrapper"
+    style="min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 1.5rem; background: #f1f5f9; position: relative; overflow: hidden;">
+    <!-- Background Decorations -->
+    <div
+        style="position: absolute; top: -100px; right: -100px; width: 400px; height: 400px; background: #4f46e5; opacity: 0.05; border-radius: 50%;">
+    </div>
+    <div
+        style="position: absolute; bottom: -150px; left: -150px; width: 500px; height: 500px; background: #06b6d4; opacity: 0.03; border-radius: 50%;">
+    </div>
+
+    <!-- Login Container -->
+    <div class="login-container"
+        style="width: 100%; max-width: 400px; background: #ffffff; border-radius: 16px; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04); padding: 2.5rem; position: relative; z-index: 1; border: 1px solid #e2e8f0;">
+
+        <!-- Logo Section -->
+        <div style="text-align: center; margin-bottom: 2rem;">
+            <div
+                style="width: 70px; height: 70px; background: linear-gradient(135deg, #4f46e5 0%, #4338ca 100%); border-radius: 16px; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem; box-shadow: 0 8px 20px rgba(79, 70, 229, 0.3);">
+                <i class="fa-solid fa-box-open" style="font-size: 2rem; color: white;"></i>
+            </div>
+            <h4
+                style="font-size: 1.5rem; font-weight: 700; color: #1e293b; margin-bottom: 0.5rem; letter-spacing: -0.5px;">
+                Welcome Back</h4>
+            <p style="color: #64748b; font-size: 0.9rem; margin: 0;">Please sign in to your account</p>
+        </div>
+
+        <!-- Login Form -->
+        <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+            <!-- Email Field -->
+            <div style="margin-bottom: 1.25rem;">
+                <label for="email"
+                    style="display: block; font-weight: 500; color: #1e293b; font-size: 0.875rem; margin-bottom: 0.5rem;">Email
+                    Address</label>
+                <div
+                    style="display: flex; border-radius: 10px; overflow: hidden; box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);">
+                    <span
+                        style="background: #eef2ff; border: 2px solid #e2e8f0; border-right: none; color: #4f46e5; font-size: 1rem; padding: 0.75rem 1rem; display: flex; align-items: center;">
+                        <i class="fa-regular fa-envelope"></i>
+                    </span>
+                    <input type="email"
+                        style="flex: 1; height: 50px; border: 2px solid #e2e8f0; border-radius: 0 10px 10px 0; padding: 0.75rem 1rem; font-size: 0.95rem; background: #ffffff; transition: all 0.15s ease; color: #1e293b;"
+                        id="email" placeholder="Enter your email" formControlName="email" name="email" required>
+                </div>
+            </div>
+
+            <!-- Password Field -->
+            <div style="margin-bottom: 1.25rem;">
+                <label for="password"
+                    style="display: block; font-weight: 500; color: #1e293b; font-size: 0.875rem; margin-bottom: 0.5rem;">Password</label>
+                <div
+                    style="display: flex; border-radius: 10px; overflow: hidden; box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);">
+                    <span
+                        style="background: #eef2ff; border: 2px solid #e2e8f0; border-right: none; color: #4f46e5; font-size: 1rem; padding: 0.75rem 1rem; display: flex; align-items: center;">
+                        <i class="fa-solid fa-lock"></i>
+                    </span>
+                    <input [type]="showPassword ? 'text' : 'password'"
+                        style="flex: 1; height: 50px; border: 2px solid #e2e8f0; border-right: none; border-left: none; padding: 0.75rem 1rem; font-size: 0.95rem; background: #ffffff; transition: all 0.15s ease; color: #1e293b;"
+                        id="password" placeholder="Enter your password" formControlName="password" name="password" required>
+                    <button type="button"
+                        style="border: 2px solid #e2e8f0; border-left: none; background: #ffffff; padding: 0.75rem 1rem; color: #64748b; transition: all 0.15s ease; cursor: pointer;"
+                        (click)="togglePassword()">
+                        <i class="fa-regular" [class.fa-eye-slash]="showPassword" [class.fa-eye]="!showPassword"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Remember & Forgot Row -->
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                    <input
+                        style="width: 1.1em; height: 1.1em; border: 2px solid #e2e8f0; border-radius: 4px; cursor: pointer; margin: 0;"
+                        type="checkbox" id="remember"  name="remember">
+                    <label style="color: #64748b; font-size: 0.85rem; cursor: pointer;" for="remember">
+                        Remember me
+                    </label>
+                </div>
+                <a href="#" style="color: #4f46e5; text-decoration: none; font-size: 0.85rem; font-weight: 500;">Forgot
+                    Password?</a>
+            </div>
+
+            <!-- Submit Button -->
+            <!-- <div style="display: grid;">
+                <button type="submit"
+                    style="background: linear-gradient(135deg, #4f46e5 0%, #4338ca 100%); border: none; border-radius: 10px; font-size: 1rem; font-weight: 600; color: white; padding: 0.875rem 1.5rem; height: 54px; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(79, 70, 229, 0.35); cursor: pointer; letter-spacing: 0.3px;"
+                    [disabled]="isLoading">
+                    <span *ngIf="!isLoading">
+                        <i class="fa-solid fa-right-to-bracket"></i> Sign In
+                    </span>
+                    <span *ngIf="isLoading">
+                        <span class="spinner-border spinner-border-sm me-2"></span> Signing in...
+                    </span>
+                </button>
+            </div> -->
+
+
+             <div style="display: grid;">
+                <button type="submit"
+                    style="background: linear-gradient(135deg, #4f46e5 0%, #4338ca 100%); border: none; border-radius: 10px; font-size: 1rem; font-weight: 600; color: white; padding: 0.875rem 1.5rem; height: 54px; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(79, 70, 229, 0.35); cursor: pointer; letter-spacing: 0.3px;"
+                    [disabled]="isLoading">
+                    @if(!isLoading){
+                    <span>
+                        <i class="fa-solid fa-right-to-bracket"></i> Sign In
+                    </span>
+                    }@else {
+                    <span class="spinner-border spinner-border-sm me-2"></span> Signing in...
+                    }
+                </button>
+            </div>
+
+        </form>
+
+        <!-- Register Link -->
+        <p style="color: #64748b; font-size: 0.9rem; margin: 0; text-align: center; margin-top: 1.5rem;">
+            Don't have an account?
+            <a href="#" style="color: #4f46e5; font-weight: 600; text-decoration: none;">Sign up</a>
+        </p>
+    </div>
+
+    <!-- Footer -->
+    <div style="margin-top: 2rem; color: #94a3b8; font-size: 0.8rem; text-align: center;">
+        <p style="margin: 0;">&copy; 2026 Your Company. All rights reserved.</p>
+    </div>
+</div>
+
+<!-- FontAwesome -->
