@@ -94,6 +94,7 @@
             <div class="col-md-6">
               <label class="form-label">Category *</label>
               <select class="form-select" required formControlName="categoryId">
+                <option value="" disabled selected>Select Category</option>
                 @for (item of category(); track $index) {
                   <option [value]="item.categoryId">{{item.categoryName}}</option>
                 }
@@ -102,6 +103,7 @@
             <div class="col-md-6">
               <label class="form-label">Status *</label>
               <select class="form-select" required formControlName="statusId">
+                <option value="" disabled selected>Select Status</option>
                 @for (item of status(); track $index) {
                <option [value]="item.statusId">{{item.statusName}}</option>
                 }

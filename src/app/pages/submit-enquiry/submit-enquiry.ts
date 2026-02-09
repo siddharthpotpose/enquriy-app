@@ -1,11 +1,13 @@
-import { Component, signal, Signal } from '@angular/core';
+import { Component, DestroyRef, signal, Signal } from '@angular/core';
 import { AllServices } from '../service/all-services';
 import { createEnquiry } from '../service/api-requestbody';
-import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { commonImport } from '../../../global.constant';
 
 @Component({
   selector: 'app-submit-enquiry',
-  imports: [ReactiveFormsModule],
+  imports: [commonImport],
   templateUrl: './submit-enquiry.html',
   styleUrl: './submit-enquiry.css',
 })
@@ -16,7 +18,11 @@ export class SubmitEnquiry {
 
   EnquiryObj = new createEnquiry()
 
-  constructor(private service: AllServices) { }
+  constructor(private service: AllServices, private destroyRef : DestroyRef) {
+     this.destroyRef.onDestroy(() => {
+      console.log('Component destroyed 🚨');
+    });
+   }
 
   ngOnInit() {
     this.getCategory();
@@ -40,7 +46,8 @@ export class SubmitEnquiry {
 
 
   getCategory() {
-    this.service.getAllCategory().subscribe({
+    this.service.getAllCategory().pipe(takeUntilDestroyed(this.destroyRef))
+    .subscribe({
       next: (res: any) => {
         this.category.set(res.data);
         console.log(this.category);
@@ -49,7 +56,8 @@ export class SubmitEnquiry {
   }
 
   getStatus() {
-    this.service.getAllStatus().subscribe({
+    this.service.getAllStatus().pipe(takeUntilDestroyed(this.destroyRef))
+    .subscribe({
       next: (res: any) => {
         this.status.set(res.data);
         console.log(this.status);
@@ -67,7 +75,7 @@ export class SubmitEnquiry {
     const formData = this.enquiryForm.value;
      delete formData.enquiryId;
 
-    this.service.createEnquiry(formData).subscribe({
+    this.service.createEnquiry(formData).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next:(res:any)=>{
         console.log(res,'formData');
            alert('successfully saved');

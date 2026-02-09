@@ -3,27 +3,36 @@ import { Home } from './pages/home/home';
 import { Login } from './pages/login/login';
 import { SubmitEnquiry } from './pages/submit-enquiry/submit-enquiry';
 import { Dashboard } from './pages/dashboard/dashboard';
+import { EquiryDetails } from './pages/equiry-details/equiry-details';
+import { authGuardGuard } from '../auth/auth-guard-guard';
 
 export const routes: Routes = [
     {
-        path:'',
+        path: '',
         redirectTo: 'home',
         pathMatch: 'full'
     },
     {
-        path:'home',
-        component:Home
+        path: 'home',
+        component: Home,
+       
     },
     {
-        path:'login',
+        path: 'login',
         component: Login
     },
     {
-        path:'submitenquiry',
-        component:SubmitEnquiry
+        path: 'submitenquiry',
+        component: SubmitEnquiry,
     },
     {
-        path:'dashboard',
-        component:Dashboard
+        path: 'enquirydetails',
+        component: EquiryDetails,
+        canActivate: [authGuardGuard]
+    },
+    {
+        path: 'dashboard',
+        component: Dashboard,
+        canActivate: [authGuardGuard]
     }
 ];

@@ -11,19 +11,33 @@
     <nav>
       <ul class="navbar-menu" [class.active]="isMobileMenuOpen" id="navbarMenu">
         <li class="nav-item">
-          <a routerLink="home" class="nav-link" [class.active]="currentRoute === 'home'" (click)="setRoute('home')">Home</a>
+          <a routerLink="home" class="nav-link" [class.active]="currentRoute === 'home'"
+            (click)="setRoute('home')">Home</a>
+        </li>
+
+        @if(isLoggedIn()){
+        <li class="nav-item">
+          <a routerLink="dashboard" class="nav-link" [class.active]="currentRoute === 'dashboard'"
+            (click)="setRoute('dashboard')">Dashboard</a>
+        </li>
+          <li class="nav-item">
+          <a routerLink="enquirydetails" class="nav-link" [class.active]="currentRoute === 'enquirydetails'"
+            (click)="setRoute('enquirydetails')">Enquiry Details</a>
+        </li>
+        }
+
+
+        <li class="nav-item">
+          <a routerLink="submitenquiry" class="nav-link" [class.active]="currentRoute === 'submitenquiry'"
+            (click)="setRoute('submitenquiry')">Enquiries</a>
         </li>
         <li class="nav-item">
-          <a routerLink="dashboard" class="nav-link" [class.active]="currentRoute === 'dashboard'" (click)="setRoute('dashboard')">Dashboard</a>
+          <a routerLink="category" class="nav-link" [class.active]="currentRoute === 'categories'"
+            (click)="setRoute('categories')">Categories</a>
         </li>
         <li class="nav-item">
-          <a routerLink="submitenquiry" class="nav-link" [class.active]="currentRoute === 'submitenquiry'" (click)="setRoute('submitenquiry')">Enquiries</a>
-        </li>
-        <li class="nav-item">
-          <a routerLink="category" class="nav-link" [class.active]="currentRoute === 'categories'" (click)="setRoute('categories')">Categories</a>
-        </li>
-        <li class="nav-item">
-          <a routerLink="home" class="nav-link" [class.active]="currentRoute === 'status'" (click)="setRoute('status')">Status</a>
+          <a routerLink="home" class="nav-link" [class.active]="currentRoute === 'status'"
+            (click)="setRoute('status')">Status</a>
         </li>
       </ul>
     </nav>
@@ -31,28 +45,32 @@
     <!-- Right Side - Auth Section -->
     <div class="navbar-auth" [class.active]="isMobileMenuOpen" id="navbarAuth">
       <!-- Logged Out State -->
-      <div class="auth-section logged-out" *ngIf="!isLoggedIn">
-        <button class="login-btn" routerLink="login" >
+
+      @if(!isLoggedIn()){
+      <div class="auth-section logged-out">
+        <button class="login-btn" routerLink="login">
           <span class="btn-icon">👤</span>
           <span class="btn-text">Login</span>
         </button>
       </div>
-
+      }@else{
       <!-- Logged In State -->
-      <div class="auth-section logged-in" *ngIf="isLoggedIn">
+      <div class="auth-section logged-in">
         <div class="user-info">
           <span class="user-avatar">👤</span>
-          <span class="user-name">{{ userName }}</span>
+          <span class="user-name">Welcome - {{ userName() }}</span>
         </div>
-        <button class="logout-btn" (click)="toggleLoginState()">
+        <button class="logout-btn" (click)="logOut()">
           <span class="btn-icon">🚪</span>
           <span class="btn-text">Logout</span>
         </button>
       </div>
+      }
     </div>
 
     <!-- Mobile Menu Toggle Button -->
-    <button class="mobile-menu-btn" [class.active]="isMobileMenuOpen" (click)="toggleMobileMenu()" aria-label="Toggle menu">
+    <button class="mobile-menu-btn" [class.active]="isMobileMenuOpen" (click)="toggleMobileMenu()"
+      aria-label="Toggle menu">
       <span class="hamburger-line"></span>
       <span class="hamburger-line"></span>
       <span class="hamburger-line"></span>

@@ -40,7 +40,7 @@
                     </span>
                     <input type="email"
                         style="flex: 1; height: 50px; border: 2px solid #e2e8f0; border-radius: 0 10px 10px 0; padding: 0.75rem 1rem; font-size: 0.95rem; background: #ffffff; transition: all 0.15s ease; color: #1e293b;"
-                        id="email" placeholder="Enter your email" formControlName="email" name="email" required>
+                        id="email" placeholder="Enter your email" formControlName="emailId" name="emailId" required>
                 </div>
             </div>
 
@@ -56,7 +56,8 @@
                     </span>
                     <input [type]="showPassword ? 'text' : 'password'"
                         style="flex: 1; height: 50px; border: 2px solid #e2e8f0; border-right: none; border-left: none; padding: 0.75rem 1rem; font-size: 0.95rem; background: #ffffff; transition: all 0.15s ease; color: #1e293b;"
-                        id="password" placeholder="Enter your password" formControlName="password" name="password" required>
+                        id="password" placeholder="Enter your password" formControlName="password" name="password"
+                        required>
                     <button type="button"
                         style="border: 2px solid #e2e8f0; border-left: none; background: #ffffff; padding: 0.75rem 1rem; color: #64748b; transition: all 0.15s ease; cursor: pointer;"
                         (click)="togglePassword()">
@@ -70,7 +71,7 @@
                 <div style="display: flex; align-items: center; gap: 0.5rem;">
                     <input
                         style="width: 1.1em; height: 1.1em; border: 2px solid #e2e8f0; border-radius: 4px; cursor: pointer; margin: 0;"
-                        type="checkbox" id="remember"  name="remember">
+                        type="checkbox" id="remember" name="remember">
                     <label style="color: #64748b; font-size: 0.85rem; cursor: pointer;" for="remember">
                         Remember me
                     </label>
@@ -94,7 +95,7 @@
             </div> -->
 
 
-             <div style="display: grid;">
+            <div style="display: grid;">
                 <button type="submit"
                     style="background: linear-gradient(135deg, #4f46e5 0%, #4338ca 100%); border: none; border-radius: 10px; font-size: 1rem; font-weight: 600; color: white; padding: 0.875rem 1.5rem; height: 54px; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(79, 70, 229, 0.35); cursor: pointer; letter-spacing: 0.3px;"
                     [disabled]="isLoading">

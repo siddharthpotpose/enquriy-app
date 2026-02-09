@@ -1,4 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
+import { AllServices } from '../service/all-services';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-dashboard',
@@ -7,5 +9,17 @@ import { Component } from '@angular/core';
   styleUrl: './dashboard.css',
 })
 export class Dashboard {
+
+  http = inject(HttpClient)
+
+  constructor(private service: AllServices){
+    this.http.get('https://api.freeprojectapi.com/api/UserApp/GetAllUsers').subscribe(({
+      next:(res:any)=>{
+        console.log(res.data)
+      }
+    }))
+  }
+
+  
 
 }
