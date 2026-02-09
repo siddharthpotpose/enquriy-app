@@ -12,7 +12,7 @@
       </div>
       <div class="page-header-stats">
         <div class="stat-item">
-          <span class="stat-number">08</span>
+          <span class="stat-number">{{ totalRecords() }}</span>
           <span class="stat-label">Total Enquiries</span>
         </div>
         <div class="stat-divider"></div>
@@ -27,58 +27,96 @@
         </div>
       </div>
     </div>
-    <div class="page-header-bottom"></div>
+    <div class="page-header-bottom"></div> 
   </div>
 
-  <!-- Cards Row 1 -->
-  <div class="row g-4 mb-4">
-    <!-- Card 1 -->
-    @for(item of pagedData(); track $index) {
-    <div class="col-xl-3 col-lg-4 col-md-6 col-sm-12">
+  <!-- Loading State -->
+  @if (isLoading()) {
+    <div class="loading-container">
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+      <p class="mt-2">Loading enquiry details...</p>
+    </div>
+  }
 
-      <div class="enquiry-card">
-        <div class="card-header-custom">
-          <div class="user-avatar">JD</div>
-          <div class="user-info">
-            <h5 class="user-name">{{item.customerName ? item.customerName : '-'}}</h5>
-            <span class="enquiry-id">{{item.enquiryId ? item.enquiryId : '-'}}</span>
-          </div>
-        </div>
-        <div class="card-body-custom">
-          <div class="info-row">
-            <span class="info-label">Email:</span>
-            <span class="info-value">{{item.customerEmail ? item.customerEmail : '-'}}</span>
-          </div>
-          <div class="info-row">
-            <span class="info-label">Phone:</span>
-            <span class="info-value">{{item.customerPhone ? item.customerPhone : '-'}}</span>
-          </div>
-          <div class="info-row">
-            <span class="info-label">Service:</span>
-            <span class="info-value">{{item.enquiryType ? item.enquiryType : '-'}}</span>
-          </div>
-          <div class="info-row">
-            <span class="info-label">Date:</span>
-            <span class="info-value"> {{ item.enquiryDate | date:'dd-MMM-yyyy' }}</span>
-          </div>
-          <div class="info-row">
-            <span class="info-label">Message</span>
-            <span class="info-value">{{item.message ? item.message : '-'}}</span>
-          </div>
-        </div>
-        <div class="card-footer-custom">
-          <button class="btn-action btn-view">View Details</button>
-          <button class="btn-action btn-edit">Edit</button>
-        </div>
+  <!-- Error State -->
+  @if (errorMessage()) {
+    <div class="error-container">
+      <div class="alert alert-danger">
+        <i class="fas fa-exclamation-triangle"></i>
+        <p>{{ errorMessage() }}</p>
+        <button class="btn btn-primary mt-2" (click)="retryLoad()">
+          <i class="fas fa-redo"></i> Retry
+        </button>
       </div>
     </div>
-    }
+  }
+
+  <!-- Empty State -->
+  @if (!isLoading() && !errorMessage() && pagedData().length === 0) {
+    <div class="empty-container">
+      <div class="empty-state">
+        <i class="fas fa-inbox empty-icon"></i>
+        <h4>No Enquiries Found</h4>
+        <p>There are no enquiry details to display at this time.</p>
+      </div>
+    </div>
+  }
+
+  <!-- Cards Row -->
+  @if (!isLoading() && !errorMessage()) {
+    <div class="row g-4 mb-4">
+      @for(item of pagedData(); track $index) {
+      <div class="col-xl-3 col-lg-4 col-md-6 col-sm-12">
+
+        <div class="enquiry-card">
+          <div class="card-header-custom">
+            <div class="user-avatar">JD</div>
+            <div class="user-info">
+              <h5 class="user-name">{{item.customerName ? item.customerName : '-'}}</h5>
+              <span class="enquiry-id">{{item.enquiryId ? item.enquiryId : '-'}}</span>
+            </div>
+          </div>
+          <div class="card-body-custom">
+            <div class="info-row">
+              <span class="info-label">Email:</span>
+              <span class="info-value">{{item.customerEmail ? item.customerEmail : '-'}}</span>
+            </div>
+            <div class="info-row">
+              <span class="info-label">Phone:</span>
+              <span class="info-value">{{item.customerPhone ? item.customerPhone : '-'}}</span>
+            </div>
+            <div class="info-row">
+              <span class="info-label">Service:</span>
+              <span class="info-value">{{item.enquiryType ? item.enquiryType : '-'}}</span>
+            </div>
+            <div class="info-row">
+              <span class="info-label">Date:</span>
+              <span class="info-value"> {{ item.enquiryDate | date:'dd-MMM-yyyy' }}</span>
+            </div>
+            <div class="info-row">
+              <span class="info-label">Message</span>
+              <span class="info-value">{{item.message ? item.message : '-'}}</span>
+            </div>
+          </div>
+          <div class="card-footer-custom">
+            <button class="btn-action btn-view">View Details</button>
+            <button class="btn-action btn-edit">Edit</button>
+          </div>
+        </div>
+      </div>
+      }
+    </div>
+  }
+
+  <!-- Pagination -->
+  @if (totalRecords() > 0) {
     <div class="d-flex justify-content-center mt-4">
       <ngb-pagination [collectionSize]="totalRecords()" [pageSize]="pageSize()" [page]="page()"
         (pageChange)="onPageChange($event)" [maxSize]="5" [boundaryLinks]="true">
       </ngb-pagination>
-
     </div>
+  }
 
-
-  </div>
+</div>

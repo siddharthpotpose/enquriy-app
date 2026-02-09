@@ -580,3 +580,92 @@
 .enquiry-card * {
   transition: all 0.2s ease;
 }
+
+/* =============================================
+   Loading, Error & Empty States
+   ============================================= */
+
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem 2rem;
+  text-align: center;
+}
+
+.loading-container .spinner-border {
+  width: 3rem;
+  height: 3rem;
+}
+
+.loading-container p {
+  color: #6c757d;
+  font-size: 1rem;
+  margin-top: 1rem;
+}
+
+.error-container {
+  padding: 2rem;
+}
+
+.error-container .alert {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 2rem;
+  border-radius: 12px;
+  background: #f8d7da;
+  border: 1px solid #f5c6cb;
+}
+
+.error-container .alert i {
+  font-size: 2rem;
+  color: #721c24;
+  margin-bottom: 1rem;
+}
+
+.error-container .alert p {
+  color: #721c24;
+  font-size: 1rem;
+  margin: 0;
+}
+
+.error-container .btn {
+  margin-top: 1rem;
+}
+
+.empty-container {
+  padding: 3rem 2rem;
+}
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 3rem;
+  background: #f8f9fa;
+  border-radius: 12px;
+  border: 2px dashed #dee2e6;
+}
+
+.empty-icon {
+  font-size: 4rem;
+  color: #adb5bd;
+  margin-bottom: 1.5rem;
+}
+
+.empty-state h4 {
+  color: #495057;
+  font-size: 1.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.empty-state p {
+  color: #6c757d;
+  font-size: 1rem;
+  margin: 0;
+}

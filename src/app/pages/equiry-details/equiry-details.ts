@@ -2,6 +2,7 @@ import { Component, signal, Signal } from '@angular/core';
 import { AllServices } from '../service/all-services';
 import { CommonModule, DatePipe } from '@angular/common';
 import { NgbPagination } from '@ng-bootstrap/ng-bootstrap';
+
 @Component({
   selector: 'app-equiry-details',
   imports: [DatePipe, CommonModule, NgbPagination],
@@ -10,7 +11,10 @@ import { NgbPagination } from '@ng-bootstrap/ng-bootstrap';
 })
 export class EquiryDetails {
 
-
+  // Loading and error states
+  isLoading = signal<boolean>(false);
+  errorMessage = signal<string>('');
+  
   resData = signal<any[]>([]);
   totalRecords = signal(0);
   page = signal<any>(1);
@@ -25,19 +29,35 @@ export class EquiryDetails {
 
 
   enquiriesDetails() {
-    this.service.getEnquiries(this.page(), this.pageSize()).subscribe(({
+    this.isLoading.set(true);
+    this.errorMessage.set('');
+    
+    this.service.getEnquiries(this.page(), this.pageSize()).subscribe({
       next: (res: any) => {
-        // alert('details fetch');
-        //  this.resData.set(res.data)
-        // console.log(this.resData());
-        //  this.totalRecords.set(res.data.length);
-        //  this.setPageData();
-        this.allData.set(res.data);               // ✅ store full data
-        this.totalRecords.set(res.data.length);   // ✅ total records
-        this.page.set(1);                         // optional reset
-        this.setPageData();
+        console.log('Enquiry API Response:', res);
+        this.isLoading.set(false);
+        
+        if (res && res.data) {
+          this.allData.set(res.data || []);
+          this.totalRecords.set((res.data || []).length);
+          this.page.set(1);
+          this.setPageData();
+        } else {
+          this.errorMessage.set('No data available');
+          this.allData.set([]);
+          this.pagedData.set([]);
+          this.totalRecords.set(0);
+        }
+      },
+      error: (err: any) => {
+        console.error('Enquiry API Error:', err);
+        this.isLoading.set(false);
+        this.errorMessage.set(err.message || 'Failed to load enquiry details');
+        this.allData.set([]);
+        this.pagedData.set([]);
+        this.totalRecords.set(0);
       }
-    }))
+    });
   }
 
   allData = signal<any[]>([]);
@@ -55,6 +75,11 @@ export class EquiryDetails {
   onPageChange(page: number) {
     this.page.set(page);
     this.setPageData();
+  }
+
+  // Method to retry loading data
+  retryLoad() {
+    this.enquiriesDetails();
   }
 
 }
