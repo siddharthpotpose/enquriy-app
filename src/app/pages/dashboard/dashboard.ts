@@ -17,7 +17,7 @@ export class Dashboard {
     this.http.get('https://api.freeprojectapi.com/api/UserApp/GetAllUsers').subscribe(({
       next:(res:any)=>{
         console.log(res.data);
-        this.alertService.success(res.message)
+        this.alertService.success(res.message || 'Successfully')
 
 
       }
