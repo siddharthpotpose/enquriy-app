@@ -669,3 +669,105 @@
   font-size: 1rem;
   margin: 0;
 }
+
+/* =============================================
+   Pagination Styles - Professional Circle Design
+   ============================================= */
+
+::ng-deep .pagination-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+}
+
+::ng-deep ngb-pagination {
+  display: flex;
+  align-items: center;
+}
+
+::ng-deep ngb-pagination .pagination {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0 !important;
+  padding: 10px 15px;
+  background: #fff;
+  border-radius: 50px;
+  box-shadow: 0 2px 15px rgba(0, 0, 0, 0.08);
+}
+
+::ng-deep ngb-pagination .page-link {
+  width: 38px !important;
+  height: 38px !important;
+  border-radius: 50% !important;
+  border: none !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  font-weight: 600 !important;
+  font-size: 0.875rem !important;
+  color: #667eea !important;
+  background: #f8f9fa !important;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  position: relative !important;
+  overflow: hidden !important;
+}
+
+::ng-deep ngb-pagination .page-link:hover {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+  color: #fff !important;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
+
+::ng-deep ngb-pagination .page-link:focus {
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.25) !important;
+  outline: none !important;
+}
+
+/* Active Page */
+::ng-deep ngb-pagination .page-item.active .page-link {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+  color: #fff !important;
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+  transform: scale(1.05);
+}
+
+/* Disabled State */
+::ng-deep ngb-pagination .page-item.disabled .page-link {
+  background: #e9ecef !important;
+  color: #adb5bd !important;
+  opacity: 0.6;
+  transform: none;
+  box-shadow: none !important;
+}
+
+/* First and Last Page arrows */
+::ng-deep ngb-pagination .page-item.first .page-link,
+::ng-deep ngb-pagination .page-item.last .page-link,
+::ng-deep ngb-pagination .page-item.prev .page-link,
+::ng-deep ngb-pagination .page-item.next .page-link {
+  font-size: 0.75rem !important;
+}
+
+/* Remove default Bootstrap margins */
+::ng-deep ngb-pagination .page-item {
+  margin: 0 !important;
+}
+
+/* Smooth animation for page transitions */
+::ng-deep ngb-pagination .page-link {
+  animation: fadeIn 0.2s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}

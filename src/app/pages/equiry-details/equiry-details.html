@@ -112,9 +112,9 @@
 
   <!-- Pagination -->
   @if (totalRecords() > 0) {
-    <div class="d-flex justify-content-center mt-4">
+    <div class="pagination-wrapper mt-4">
       <ngb-pagination [collectionSize]="totalRecords()" [pageSize]="pageSize()" [page]="page()"
-        (pageChange)="onPageChange($event)" [maxSize]="5" [boundaryLinks]="true">
+        (pageChange)="onPageChange($event)" [maxSize]="2" [boundaryLinks]="true">
       </ngb-pagination>
     </div>
   }

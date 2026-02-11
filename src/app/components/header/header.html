@@ -1,5 +1,5 @@
 <!-- Header/Navbar Component -->
-<header class="navbar">
+<header class="navbar" [class.logged-in]="isLoggedIn()" [class.logged-out]="!isLoggedIn()">
   <div class="navbar-container">
     <!-- Logo -->
     <a href="#" class="navbar-logo">

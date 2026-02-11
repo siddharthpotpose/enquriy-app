@@ -1,4 +1,4 @@
-import { Component, DestroyRef, computed, signal } from '@angular/core';
+import { Component, DestroyRef, computed, signal, ChangeDetectorRef } from '@angular/core';
 import { AllServices } from '../service/all-services';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CommonModule } from '@angular/common';
@@ -6,10 +6,11 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { AlertService } from '../../share/alert/alert.service';
 import { createCategory, updateCategory } from '../service/api-requestbody';
 import { validate } from '@angular/forms/signals';
+import { NgbPagination } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'app-enquiry-category',
-  imports: [ReactiveFormsModule, CommonModule],
+  imports: [ReactiveFormsModule, CommonModule,NgbPagination],
   templateUrl: './enquiry-category.html',
   styleUrl: './enquiry-category.css',
 })
@@ -30,6 +31,23 @@ export class EnquiryCategory {
   selectedCategoryId = signal<number | null>(null);
   deleteRemark = signal<string>('');
 
+  // Filter state
+  statusFilter = signal<'all' | 'active' | 'inactive'>('all');
+
+  // Filtered data based on status filter
+  filteredData = computed(() => {
+    const filter = this.statusFilter();
+    const data = this.categoryDataRes();
+    
+    if (filter === 'all') {
+      return data;
+    } else if (filter === 'active') {
+      return data.filter(item => item.isActive === true);
+    } else {
+      return data.filter(item => item.isActive === false);
+    }
+  });
+
   // Computed values for footer stats
   activeCount = computed(() => {
     return this.categoryDataRes().filter(item => item.isActive === true).length;
@@ -39,9 +57,19 @@ export class EnquiryCategory {
     return this.categoryDataRes().filter(item => item.isActive === false).length;
   });
 
+  // Method to get page start (alternative approach)
+  getPageStart(): number {
+    return (this.page() - 1) * this.pageSize() + 1;
+  }
+
+  // Method to get page end
+  getPageEnd(): number {
+    return Math.min(this.page() * this.pageSize(), this.totalRecords());
+  }
 
 
-  constructor(private service: AllServices, private alert: AlertService, private destroyRef: DestroyRef) { }
+
+  constructor(private service: AllServices, private alert: AlertService, private destroyRef: DestroyRef, private cdr: ChangeDetectorRef) { }
 
 
   ngOnInit() {
@@ -104,12 +132,17 @@ export class EnquiryCategory {
     this.showForm.update(value => !value);
   }
 
-  resetForm() {
+  closeForm() {
     this.isLoading = false;
     this.isEditMode = false;
     this.showForm.set(false);
     this.categoryForm.reset({ isActive: false });
     this.categoryDataDetails();
+  }
+
+  resetForm() {
+    this.isLoading = false;
+    this.categoryForm.reset({ isActive: this.categoryForm.get('isActive')?.value || false });
   }
 
   editCategory(item: any) {
@@ -120,6 +153,14 @@ export class EnquiryCategory {
       categoryName: item.categoryName,
       isActive: item.isActive
     });
+    
+    // Scroll to form section after data is set
+    setTimeout(() => {
+      const formSection = document.getElementById('categoryFormSection');
+      if (formSection) {
+        formSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }, 100);
   }
 
   openDeleteModal(categoryId: number) {
@@ -156,12 +197,53 @@ export class EnquiryCategory {
     this.service.getCategoryData().subscribe({
       next: (res: any) => {
         // this.alert.success(res.message);
-        this.categoryDataRes.set(res.data);
+        this.categoryDataRes.set(res.data || []);
+        this.setPageData();
         console.log(this.categoryDataRes);
       }, error(err) {
         alert(err.error.message);
       },
     })
+  }
+
+  // Set status filter
+  setStatusFilter(filter: 'all' | 'active' | 'inactive') {
+    this.statusFilter.set(filter);
+    this.page.set(1); // Reset to first page when filter changes
+    this.setPageData();
+    this.cdr.markForCheck();
+  }
+
+  totalRecords = signal(0);
+  page = signal<any>(1);
+  pageSize = signal<any>(10);
+
+  // Get filtered total records
+  getFilteredTotalRecords(): number {
+    return this.filteredData().length;
+  }
+
+  pagedData = signal<any[]>([]);
+
+  setPageData() {
+    const start = (this.page() - 1) * this.pageSize();
+    const end = start + this.pageSize();
+
+    this.pagedData.set(
+      this.filteredData().slice(start, end)
+    );
+    this.totalRecords.set(this.filteredData().length);
+  }
+
+  onPageChange(page: number) {
+    this.page.set(page);
+    this.setPageData();
+    this.cdr.markForCheck();
+  }
+
+  // Method to retry loading data
+  retryLoad() {
+    this.categoryDataDetails();
   }
 
 }
