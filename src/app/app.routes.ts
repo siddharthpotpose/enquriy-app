@@ -5,6 +5,7 @@ import { SubmitEnquiry } from './pages/submit-enquiry/submit-enquiry';
 import { Dashboard } from './pages/dashboard/dashboard';
 import { EquiryDetails } from './pages/equiry-details/equiry-details';
 import { authGuardGuard } from '../auth/auth-guard-guard';
+import { EnquiryCategory } from './pages/enquiry-category/enquiry-category';
 
 export const routes: Routes = [
     {
@@ -33,6 +34,11 @@ export const routes: Routes = [
     {
         path: 'dashboard',
         component: Dashboard,
+        canActivate: [authGuardGuard]
+    },
+    {
+        path: 'category',
+        component: EnquiryCategory,
         canActivate: [authGuardGuard]
     }
 ];

@@ -4,6 +4,7 @@ import { createEnquiry } from '../service/api-requestbody';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { commonImport } from '../../../global.constant';
+import { maxLength } from '@angular/forms/signals';
 
 @Component({
   selector: 'app-submit-enquiry',
@@ -31,7 +32,7 @@ export class SubmitEnquiry {
 
   enquiryForm = new FormGroup({
     enquiryId: new FormControl(0),
-    customerName: new FormControl('', Validators.required),
+    customerName: new FormControl('',[ Validators.required,Validators.minLength(5),Validators.maxLength(50)]),
     customerEmail: new FormControl('', Validators.required),
     customerPhone: new FormControl('', Validators.required),
     message: new FormControl('', Validators.required),
@@ -41,7 +42,7 @@ export class SubmitEnquiry {
     isConverted: new FormControl('', Validators.required),
     enquiryDate: new FormControl('', Validators.required),
     followUpDate: new FormControl('', Validators.required),
-    feedback: new FormControl('', Validators.required)
+    feedback: new FormControl('')
   })
 
 

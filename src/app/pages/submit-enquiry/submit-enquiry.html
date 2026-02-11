@@ -18,7 +18,7 @@
       </div>
     </div>
 
-     <!-- Quick Info -->
+    <!-- Quick Info -->
     <div class="row g-2 mb-2">
       <div class="col-md-4">
         <div class="info-card compact">
@@ -51,23 +51,40 @@
           <div class="row g-3">
             <div class="col-md-6">
               <label class="form-label">Full Name *</label>
-              <div class="input-group">
-                <span class="input-group-text"><i class="fas fa-user"></i></span>
-                <input type="text" class="form-control" placeholder="Enter your name" required formControlName="customerName">
+              <div class="">
+                <div class="input-group">
+                  <span class="input-group-text"><i class="fas fa-user"></i></span>
+                  <input type="text" class="form-control" placeholder="Enter your name" required
+                    formControlName="customerName" minlength="5" maxlength="50">
+                </div>
+                @if(enquiryForm.get('customerName')?.touched && enquiryForm.get('customerName')?.errors){
+                @if(enquiryForm.get('customerName')?.errors?.['required']){
+                <span class="text-danger">customer name is required</span>
+                }
+                @if(enquiryForm.get('customerName')?.errors?.['minlength']){
+                <span class="text-danger">minimum length must be 5 characters long</span>
+                }
+                @if(enquiryForm.get('customerName')?.errors?.['maxlength']){
+                <span class="text-danger">maxlength must be 50 characters long</span>
+                }
+                }
               </div>
+
             </div>
             <div class="col-md-6">
               <label class="form-label">Email Address *</label>
               <div class="input-group">
                 <span class="input-group-text"><i class="fas fa-envelope"></i></span>
-                <input type="email" class="form-control" placeholder="Enter your email" required formControlName="customerEmail">
+                <input type="email" class="form-control" placeholder="Enter your email" required
+                  formControlName="customerEmail">
               </div>
             </div>
             <div class="col-md-6">
               <label class="form-label">Phone Number *</label>
               <div class="input-group">
                 <span class="input-group-text"><i class="fas fa-phone"></i></span>
-                <input type="tel" class="form-control" placeholder="Enter phone number" required formControlName="customerPhone">
+                <input type="tel" class="form-control" placeholder="Enter phone number" required
+                  formControlName="customerPhone">
               </div>
             </div>
             <div class="col-md-6">
@@ -96,7 +113,7 @@
               <select class="form-select" required formControlName="categoryId">
                 <option value="" disabled selected>Select Category</option>
                 @for (item of category(); track $index) {
-                  <option [value]="item.categoryId">{{item.categoryName}}</option>
+                <option [value]="item.categoryId">{{item.categoryName}}</option>
                 }
               </select>
             </div>
@@ -105,13 +122,14 @@
               <select class="form-select" required formControlName="statusId">
                 <option value="" disabled selected>Select Status</option>
                 @for (item of status(); track $index) {
-               <option [value]="item.statusId">{{item.statusName}}</option>
+                <option [value]="item.statusId">{{item.statusName}}</option>
                 }
               </select>
             </div>
             <div class="col-12">
               <label class="form-label">Message *</label>
-              <textarea class="form-control" rows="3" placeholder="Describe your enquiry" required formControlName="message"></textarea>
+              <textarea class="form-control" rows="3" placeholder="Describe your enquiry" required
+                formControlName="message"></textarea>
             </div>
           </div>
         </div>
@@ -147,7 +165,8 @@
         <!-- Feedback -->
         <div class="form-section">
           <label class="form-label">Feedback / Notes</label>
-          <textarea class="form-control" rows="2" formControlName="feedback" placeholder="Additional notes (optional)"></textarea>
+          <textarea class="form-control" rows="2" formControlName="feedback"
+            placeholder="Additional notes (optional)"></textarea>
         </div>
 
         <!-- Actions -->
@@ -162,6 +181,6 @@
       </form>
     </div>
 
-   
+
   </div>
 </section>

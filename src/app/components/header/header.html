@@ -20,9 +20,13 @@
           <a routerLink="dashboard" class="nav-link" [class.active]="currentRoute === 'dashboard'"
             (click)="setRoute('dashboard')">Dashboard</a>
         </li>
-          <li class="nav-item">
+        <li class="nav-item">
           <a routerLink="enquirydetails" class="nav-link" [class.active]="currentRoute === 'enquirydetails'"
             (click)="setRoute('enquirydetails')">Enquiry Details</a>
+        </li>
+        <li class="nav-item">
+          <a routerLink="category" class="nav-link" [class.active]="currentRoute === 'categories'"
+            (click)="setRoute('categories')">Categories</a>
         </li>
         }
 
@@ -31,10 +35,7 @@
           <a routerLink="submitenquiry" class="nav-link" [class.active]="currentRoute === 'submitenquiry'"
             (click)="setRoute('submitenquiry')">Enquiries</a>
         </li>
-        <li class="nav-item">
-          <a routerLink="category" class="nav-link" [class.active]="currentRoute === 'categories'"
-            (click)="setRoute('categories')">Categories</a>
-        </li>
+
         <li class="nav-item">
           <a routerLink="home" class="nav-link" [class.active]="currentRoute === 'status'"
             (click)="setRoute('status')">Status</a>

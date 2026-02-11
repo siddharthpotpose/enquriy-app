@@ -1,0 +1,7 @@
+<div *ngIf="visible()" class="alert-box" [ngClass]="'alert-' + config().type">
+  <div class="alert-content">
+    <span class="alert-icon">{{ icon }}</span>
+    <span class="alert-message">{{ config().message }}</span>
+  </div>
+  <button class="alert-close" (click)="hide()">×</button>
+</div>

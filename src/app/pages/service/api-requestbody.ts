@@ -12,3 +12,15 @@ export class createEnquiry{
   followUpDate: any= '';
   feedback: string= '';
 }
+
+export class createCategory{
+  categoryId: any ='';
+  categoryName: string = '';
+  isActive: Boolean =  false;
+}
+
+export class updateCategory{
+  categoryId:any='';
+  categoryName: string = '';
+  isActive: Boolean = false;
+}

@@ -2,6 +2,7 @@ import { Component, signal, Signal } from '@angular/core';
 import { AllServices } from '../service/all-services';
 import { CommonModule, DatePipe } from '@angular/common';
 import { NgbPagination } from '@ng-bootstrap/ng-bootstrap';
+import { AlertService } from '../../share/alert/alert.service';
 
 @Component({
   selector: 'app-equiry-details',
@@ -21,7 +22,7 @@ export class EquiryDetails {
   pageSize = signal<any>(12);
 
 
-  constructor(private service: AllServices) { }
+  constructor(private service: AllServices, private alertService :  AlertService) { }
 
   ngOnInit() {
     this.enquiriesDetails();
@@ -35,6 +36,7 @@ export class EquiryDetails {
     this.service.getEnquiries(this.page(), this.pageSize()).subscribe({
       next: (res: any) => {
         console.log('Enquiry API Response:', res);
+        this.alertService.success(res.message);
         this.isLoading.set(false);
         
         if (res && res.data) {
@@ -52,6 +54,7 @@ export class EquiryDetails {
       error: (err: any) => {
         console.error('Enquiry API Error:', err);
         this.isLoading.set(false);
+        this.alertService.error(err.message);
         this.errorMessage.set(err.message || 'Failed to load enquiry details');
         this.allData.set([]);
         this.pagedData.set([]);

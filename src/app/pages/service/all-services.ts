@@ -33,5 +33,20 @@ export class AllServices {
     return this.http.get(`${environment.apiUrl}${'get-enquiries'}`,{params})
   }
 
+  createCategory(obj:any){
+    return this.http.post(`${environment.apiUrl}${'create-category'}`,obj)
+  }
+
+  getCategoryData(){
+    return this.http.get(`${environment.apiUrl}${'get-categories'}`)
+  }
+
+  updateCategoryData(id: any, obj: any) {
+  return this.http.put(`${environment.apiUrl}update-category/${id}`,obj);
+}
+
+deleteCateory(id:any){
+  return this.http.delete(`${environment.apiUrl}delete-category/${id}`)
+}
 
 }

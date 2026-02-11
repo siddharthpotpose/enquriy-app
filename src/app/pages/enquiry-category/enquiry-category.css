@@ -1,0 +1,152 @@
+/* Enquiry Category Form Styles */
+
+/* Container adjustments */
+.container-fluid {
+  min-height: calc(100vh - 120px);
+}
+
+/* Card styling */
+.card {
+  border-radius: 8px;
+  transition: box-shadow 0.3s ease;
+}
+
+.card:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1) !important;
+}
+
+.card-header {
+  border-radius: 8px 8px 0 0 !important;
+}
+
+/* Form label styling */
+.col-form-label {
+  font-weight: 500;
+  padding-top: calc(0.375rem + 1px);
+  padding-bottom: calc(0.375rem + 1px);
+}
+
+/* Form control focus states */
+.form-control:focus,
+.form-select:focus {
+  border-color: #86b7fe;
+  box-shadow: 0 0 0 0.15rem rgba(13, 110, 253, 0.15);
+}
+
+/* Form switch toggle styling */
+.form-switch .form-check-input {
+  cursor: pointer;
+  width: 2.5em;
+  height: 1.3em;
+  margin-top: 0.1em;
+}
+
+.form-switch .form-check-input:checked {
+  background-color: #198754;
+  border-color: #198754;
+}
+
+.form-switch .form-check-input:focus {
+  box-shadow: 0 0 0 0.2rem rgba(25, 135, 84, 0.25);
+}
+
+/* Badge styling for status display */
+.badge {
+  font-size: 0.75rem;
+  font-weight: 500;
+  padding: 0.35em 0.65em;
+}
+
+/* Button styling */
+.btn {
+  font-weight: 500;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+}
+
+.btn-primary {
+  background-color: #0d6efd;
+  border-color: #0d6efd;
+}
+
+.btn-primary:hover {
+  background-color: #0b5ed7;
+  border-color: #0a58ca;
+  transform: translateY(-1px);
+}
+
+.btn-outline-secondary:hover {
+  background-color: #f8f9fa;
+  border-color: #6c757d;
+  color: #6c757d;
+}
+
+/* Form text adjustments */
+.form-text {
+  font-size: 0.75rem;
+  margin-top: 0.15rem;
+}
+
+/* Responsive adjustments */
+@media (max-width: 575.98px) {
+  .card-body {
+    padding: 1.25rem !important;
+  }
+
+  .col-sm-4,
+  .col-sm-8 {
+    flex: 0 0 auto;
+    width: 100%;
+  }
+
+  .col-form-label {
+    padding-bottom: 0.25rem;
+  }
+
+  .d-flex.gap-2 {
+    flex-direction: column;
+  }
+
+  .d-flex.gap-2 .btn {
+    width: 100%;
+    margin-bottom: 0.5rem;
+  }
+
+  .d-flex.gap-2 .btn:last-child {
+    margin-bottom: 0;
+  }
+}
+
+@media (max-width: 767.98px) {
+  .py-4 {
+    padding-top: 1.5rem !important;
+    padding-bottom: 1.5rem !important;
+  }
+}
+
+/* Smooth animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.card {
+  animation: fadeIn 0.4s ease-out;
+}
+
+/* Hover effect on form rows */
+.row:hover {
+  /* background-color: rgba(0, 0, 0, 0.01);
+  border-radius: 4px;
+  margin-left: -0.5rem;
+  margin-right: -0.5rem;
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
+  transition: background-color 0.2s ease; */
+}
