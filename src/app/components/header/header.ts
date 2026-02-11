@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
-import { Component, signal } from '@angular/core';
-import { Route, Router, RouterLink } from "@angular/router";
+import { Component, signal, OnInit } from '@angular/core';
+import { Router, RouterLink } from "@angular/router";
+import { AlertService } from '../../share/alert/alert.service';
 
 @Component({
   selector: 'app-header',
@@ -8,7 +9,7 @@ import { Route, Router, RouterLink } from "@angular/router";
   templateUrl: './header.html',
   styleUrl: './header.css',
 })
-export class Header {
+export class Header implements OnInit {
   isMobileMenuOpen : boolean= false;
   currentRoute = 'home';
   userName = signal<any>('');
@@ -17,7 +18,7 @@ export class Header {
 
    
 
-  constructor(public route: Router){
+  constructor(public route: Router, private alert : AlertService){
     this.userName.set( localStorage.getItem('emailId'));
     // alert(this.userName);
   }
@@ -46,6 +47,19 @@ export class Header {
     this.isMobileMenuOpen = false;
   }
 
+  scrollToSection(sectionId: string): void {
+    this.currentRoute = sectionId;
+    this.isMobileMenuOpen = false;
+    
+    // Small delay to ensure DOM is ready
+    setTimeout(() => {
+      const element = document.getElementById(sectionId);
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }, 100);
+  }
+
 
    
 
@@ -66,6 +80,7 @@ export class Header {
     localStorage.removeItem('token')
     this.isLoggedIn.set(false);
     this.userName.set('');
+    this.alert.success('logout successfully')
     // Dispatch custom event to notify same-tab listeners
     window.dispatchEvent(new Event('login-state-change'));
     this.route.navigateByUrl('/home')

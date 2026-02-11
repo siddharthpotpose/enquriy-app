@@ -1,4 +1,4 @@
-import { Component, DestroyRef, signal } from '@angular/core';
+import { Component, DestroyRef, computed, signal } from '@angular/core';
 import { AllServices } from '../service/all-services';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CommonModule } from '@angular/common';
@@ -21,6 +21,23 @@ export class EnquiryCategory {
   isEditMode: Boolean = false;
   isLoading: boolean = false;
   categoryObj = new createCategory();
+  
+  // Form visibility control
+  showForm = signal<boolean>(false);
+
+  // Delete Modal State
+  showDeleteModal = signal<boolean>(false);
+  selectedCategoryId = signal<number | null>(null);
+  deleteRemark = signal<string>('');
+
+  // Computed values for footer stats
+  activeCount = computed(() => {
+    return this.categoryDataRes().filter(item => item.isActive === true).length;
+  });
+
+  inactiveCount = computed(() => {
+    return this.categoryDataRes().filter(item => item.isActive === false).length;
+  });
 
 
 
@@ -83,15 +100,57 @@ export class EnquiryCategory {
     }
   }
 
+  toggleForm() {
+    this.showForm.update(value => !value);
+  }
+
   resetForm() {
     this.isLoading = false;
     this.isEditMode = false;
+    this.showForm.set(false);
     this.categoryForm.reset({ isActive: false });
     this.categoryDataDetails();
   }
 
+  editCategory(item: any) {
+    this.isEditMode = true;
+    this.showForm.set(true);
+    this.categoryForm.patchValue({
+      categoryId: item.categoryId,
+      categoryName: item.categoryName,
+      isActive: item.isActive
+    });
+  }
 
+  openDeleteModal(categoryId: number) {
+    this.selectedCategoryId.set(categoryId);
+    this.deleteRemark.set('');
+    this.showDeleteModal.set(true);
+  }
 
+  closeDeleteModal() {
+    this.showDeleteModal.set(false);
+    this.selectedCategoryId.set(null);
+    this.deleteRemark.set('');
+  }
+
+  confirmDelete() {
+    const categoryId = this.selectedCategoryId();
+    if (categoryId) {
+      const remark = this.deleteRemark() || undefined;
+      this.service.deleteCateory(categoryId, remark).subscribe({
+        next: (res: any) => {
+          this.alert.success(res.message || 'Category deleted');
+          this.closeDeleteModal();
+          this.categoryDataDetails();
+        },
+        error: (err: any) => {
+          this.alert.error(err.error?.message || 'Delete failed');
+          this.closeDeleteModal();
+        }
+      });
+    }
+  }
 
   categoryDataDetails() {
     this.service.getCategoryData().subscribe({
@@ -104,51 +163,5 @@ export class EnquiryCategory {
       },
     })
   }
-
-
-
-
-  editCategory(item: any) {
-    this.isEditMode = true;
-    this.categoryForm.patchValue({
-      categoryId: item.categoryId,
-      categoryName: item.categoryName,
-      isActive: item.isActive,
-    });
-  }
-
-
-  // deleteCategory(){
-  //   this.service.deleteCateory().subscribe({
-  //     next:(res:any)=>{
-  //       this.alert.success(res.data.message);
-  //     }
-  //   })
-  // }
-
-  deleteCategory(id: number) {
-    if (!confirm('Are you sure you want to delete this category?')) {
-      return;
-    }
-
-    this.isLoading = true;
-
-    this.service.deleteCateory(id).subscribe({
-      next: (res: any) => {
-        this.alert.success(res.message || 'Category deleted');
-        this.isLoading = false;
-        this.categoryDataDetails(); // refresh table
-      },
-      error: (err: any) => {
-        this.isLoading = false;
-        this.alert.error(err.error?.message || 'Delete failed');
-      },
-    });
-  }
-
-
-
-
-
 
 }

@@ -191,20 +191,20 @@
   }
   
   .graphic-card.card-1 {
-    top: 10%;
-    right: 10%;
+    top: 12%;
+    right: 23%;
     animation-delay: 1s;
   }
   
   .graphic-card.card-2 {
     bottom: 20%;
-    left: 10%;
+    left: 20%;
     animation-delay: 2s;
   }
   
   .graphic-card.card-3 {
     bottom: 10%;
-    right: 10%;
+    right: -12%;
     animation-delay: 1.5s;
   }
   

@@ -43,10 +43,14 @@ export class AllServices {
 
   updateCategoryData(id: any, obj: any) {
   return this.http.put(`${environment.apiUrl}update-category/${id}`,obj);
-}
+ }
 
-deleteCateory(id:any){
-  return this.http.delete(`${environment.apiUrl}delete-category/${id}`)
-}
+  deleteCateory(id: any, remark?: string) {
+    let params = new HttpParams();
+    if (remark) {
+      params = params.set('remark', remark);
+    }
+    return this.http.delete(`${environment.apiUrl}delete-category/${id}`, { params })
+  }
 
 }

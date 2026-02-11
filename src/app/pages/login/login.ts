@@ -3,6 +3,7 @@ import { Component, ViewEncapsulation } from '@angular/core';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AllServices } from '../service/all-services';
+import { AlertService } from '../../share/alert/alert.service';
 
 @Component({
   selector: 'app-login',
@@ -21,7 +22,7 @@ export class Login {
   showPassword: boolean = false;
   isLoading: boolean = false;
 
-  constructor(public route: Router, private service: AllServices) { }
+  constructor(public route: Router, private service: AllServices, private alert: AlertService) { }
 
   ngOnInit() {
 
@@ -72,7 +73,8 @@ export class Login {
       this.service.login(loginRes).subscribe({
         next: (res: any) => {
           console.log('Login API Response:', res); // Debug: Check the full response
-          alert(res.message);
+          // alert(res.message);
+          this.alert.success(res.message || 'login successfully')
           localStorage.setItem('loginUser', res.data.userId);
           localStorage.setItem('token', res.data.token);
           localStorage.setItem('emailId',res.data.emailId)
@@ -81,11 +83,10 @@ export class Login {
           // Dispatch custom event to notify header component in same tab
           window.dispatchEvent(new Event('login-state-change'));
           this.route.navigateByUrl('/dashboard');
-        }, error(err: any) {
-          console.error('Login Error:', err); // Debug: Check for errors
-          alert(err.message);
-          //  this.isLoading = false;
-        }
+        },   error: (err: any) => {
+        this.isLoading = false;
+        this.alert.error(err.error?.message || 'login Failed');
+      },
       })
 
     }, 1500);

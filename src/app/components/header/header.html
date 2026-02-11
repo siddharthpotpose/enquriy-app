@@ -10,10 +10,7 @@
     <!-- Navigation Links -->
     <nav>
       <ul class="navbar-menu" [class.active]="isMobileMenuOpen" id="navbarMenu">
-        <li class="nav-item">
-          <a routerLink="home" class="nav-link" [class.active]="currentRoute === 'home'"
-            (click)="setRoute('home')">Home</a>
-        </li>
+
 
         @if(isLoggedIn()){
         <li class="nav-item">
@@ -28,13 +25,26 @@
           <a routerLink="category" class="nav-link" [class.active]="currentRoute === 'categories'"
             (click)="setRoute('categories')">Categories</a>
         </li>
+        }@else {
+        <li class="nav-item">
+          <a routerLink="home" fragment="home" class="nav-link" [class.active]="currentRoute === 'home'"
+            (click)="setRoute('home')">Home</a>
+        </li>
+        <li class="nav-item">
+          <a routerLink="home" fragment="features" class="nav-link" [class.active]="currentRoute === 'features'"
+            (click)="scrollToSection('features')">Features</a>
+        </li>
+        <li class="nav-item">
+          <a routerLink="home" fragment="process" class="nav-link" [class.active]="currentRoute === 'process'"
+            (click)="scrollToSection('process')">Process</a>
+        </li>
         }
 
 
-        <li class="nav-item">
+        <!-- <li class="nav-item">
           <a routerLink="submitenquiry" class="nav-link" [class.active]="currentRoute === 'submitenquiry'"
-            (click)="setRoute('submitenquiry')">Enquiries</a>
-        </li>
+            (click)="setRoute('submitenquiry')">Get Started</a>
+        </li> -->
 
         <!-- <li class="nav-item">
           <a routerLink="home" class="nav-link" [class.active]="currentRoute === 'status'"
@@ -47,13 +57,22 @@
     <div class="navbar-auth" [class.active]="isMobileMenuOpen" id="navbarAuth">
       <!-- Logged Out State -->
 
+
       @if(!isLoggedIn()){
+      <button class="get-started-btn" routerLink="submitenquiry">
+        <!-- <span class="btn-icon">👤</span> -->
+        <i class="fas fa-rocket me-2"></i>
+        <span class="btn-text">Get Started</span>
+      </button>
+
       <div class="auth-section logged-out">
         <button class="login-btn" routerLink="login">
           <span class="btn-icon">👤</span>
           <span class="btn-text">Login</span>
         </button>
       </div>
+
+
       }@else{
       <!-- Logged In State -->
       <div class="auth-section logged-in">

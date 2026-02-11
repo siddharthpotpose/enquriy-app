@@ -1,141 +1,301 @@
-<div class="container-fluid py-4">
-  <div class="row justify-content-center">
-    <div class="col-12 col-md-8 col-lg-6">
-      <div class="card border-0 shadow-sm">
-        <div class="card-header bg-primary text-white py-3">
-          <h5 class="mb-0">
-            <i class="fa-solid fa-layer-group me-2"></i>Enquiry Category Master
-          </h5>
+<div class="container-fluid">
+  <!-- Table Section - Always Visible -->
+  
+  <!-- Summary Cards -->
+  <div class="row mb-2">
+    <div class="col-12">
+      <div class="summary-cards">
+        <div class="summary-card total-card">
+          <div class="summary-icon">
+            <i class="fa-solid fa-layer-group"></i>
+          </div>
+          <div class="summary-content">
+            <span class="summary-label">Total</span>
+            <span class="summary-value">{{categoryDataRes().length}}</span>
+          </div>
         </div>
-        <div class="card-body p-4">
-          <form class="enquiry-category-form" [formGroup]="categoryForm" (ngSubmit)="submitForm()">
-
-            <!-- Category Name -->
-            <div class="row mb-3">
-              <label for="categoryName" class="col-sm-4 col-form-label col-form-label-sm text-muted">
-                Category Name
-              </label>
-              <div class="col-sm-8">
-                <input type="text" class="form-control form-control-sm" id="categoryName"
-                  placeholder="Enter category name" maxlength="100" minlength="3" maxlength="50"
-                  formControlName="categoryName" required>
-                @if(categoryForm.get('categoryName')?.touched && categoryForm.get('categoryName')?.errors){
-                @if(categoryForm.get('categoryName')?.errors?.['required']){
-                <span class="text-danger">name is required</span>
-                }
-                @if(categoryForm.get('categoryName')?.errors?.['minlength']){
-                <span class="text-danger">minlength must be 3-50 characters long</span>
-                }
-                }
-              </div>
-            </div>
-
-            <!-- Is Active -->
-            <div class="row mb-4">
-              <label for="isActive" class="col-sm-4 col-form-label col-form-label-sm text-muted">
-                Status
-              </label>
-              <div class="col-sm-8">
-                <div class="form-check form-switch mt-2">
-                  <input class="form-check-input" type="checkbox" id="isActive" role="switch"
-                    formControlName="isActive">
-                  <label class="form-check-label ms-2" for="isActive">
-                    <span class="badge bg-success-subtle text-success"
-                      [class.d-none]="!categoryForm.get('isActive')?.value">Active</span>
-                    <span class="badge bg-danger-subtle text-danger ms-2"
-                      [class.d-none]="categoryForm.get('isActive')?.value">Inactive</span>
-                  </label>
-                </div>
-                <div class="form-text text-muted small">Enable or disable this category</div>
-              </div>
-            </div>
-
-            <!-- Form Actions -->
-            <div class="row">
-              <div class="col-sm-8 offset-sm-4">
-                <div class="d-flex gap-2">
-                  <button type="submit" class="btn btn-primary btn-sm px-4" [disabled]="isLoading">
-                    @if(isLoading){
-                    <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-                    Submitting...
-                    } @else {
-                    <i class="fa-solid fa-check me-1"></i>Submit
-                    }
-                  </button>
-                  <button type="reset" class="btn btn-outline-secondary btn-sm px-4">
-                    <i class="fa-solid fa-rotate-left me-1"></i>Reset
-                  </button>
-                </div>
-              </div>
-            </div>
-          </form>
+        <div class="summary-card active-card">
+          <div class="summary-icon">
+            <i class="fa-solid fa-check-circle"></i>
+          </div>
+          <div class="summary-content">
+            <span class="summary-label">Active</span>
+            <span class="summary-value">{{activeCount()}}</span>
+          </div>
+        </div>
+        <div class="summary-card inactive-card">
+          <div class="summary-icon">
+            <i class="fa-solid fa-times-circle"></i>
+          </div>
+          <div class="summary-content">
+            <span class="summary-label">Inactive</span>
+            <span class="summary-value">{{inactiveCount()}}</span>
+          </div>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- Static Enquiry Category Table -->
-  <div class="row mt-4">
+
+  <!-- -----------------------------------------------------  -->
+
+
+  <div class="row justify-content-center">
     <div class="col-12">
       <div class="card border-0 shadow-sm">
-        <div class="card-header bg-white py-3 border-bottom">
-          <h5 class="mb-0 text-secondary">
-            <i class="fa-solid fa-table me-2"></i>Enquiry Categories
-          </h5>
+        <div
+          class="card-header bg-white py-3 border-bottom d-flex justify-content-between align-items-center flex-wrap gap-2">
+          <div class="d-flex align-items-center me-2">
+            <div class="header-icon me-2">
+              <i class="fa-solid fa-layer-group"></i>
+            </div>
+            <div>
+              <h5 class="mb-0 text-secondary">Enquiry Categories</h5>
+              <small class="text-muted d-none d-sm-inline">Manage your enquiry categories</small>
+            </div>
+          </div>
+          <button type="button" class="btn btn-primary btn-sm flex-shrink-0" (click)="toggleForm()">
+            <i class="fa-solid fa-plus me-1"></i><span class="d-none d-sm-inline">@if(showForm()){Cancel} @else {Add Category}</span><span class="d-sm-none">@if(showForm()){✕} @else {+}</span>
+          </button>
         </div>
-        <div class="card-body p-0">
-          <div class="table-responsive">
-            <table class="table table-hover mb-0">
-              <thead class="table-light">
+
+
+        <!-- Form Section - Collapsible -->
+        @if(showForm()){
+        <div class="form-container">
+          <div class="form-card">
+            <div class="form-header">
+              <div class="d-flex align-items-center">
+                <div class="form-icon">
+                  <i class="fa-solid fa-pen-to-square"></i>
+                </div>
+                <div class="text-start">
+                  <h6 class="form-title mb-0">@if(isEditMode){Edit Category} @else {Add New Category}</h6>
+                  <small class="text-muted">Fill in the details below</small>
+                </div>
+              </div>
+              <button type="button" class="btn-close-form" (click)="resetForm()">
+                <i class="fa-solid fa-times"></i>
+              </button>
+            </div>
+
+            <div class="form-body">
+              <form class="enquiry-category-form" [formGroup]="categoryForm" (ngSubmit)="submitForm()">
+                <div class="row g-3">
+                  <!-- Category Name -->
+                  <div class="col-md-6">
+                    <label for="categoryName" class="form-label">
+                      <i class="fa-solid fa-tag me-1"></i>Category Name
+                    </label>
+                    <div class="input-group">
+                      <span class="input-group-text">
+                        <i class="fa-solid fa-box"></i>
+                      </span>
+                      <input type="text" class="form-control" id="categoryName" placeholder="Enter category name"
+                        maxlength="100" formControlName="categoryName" required>
+                    </div>
+                    @if(categoryForm.get('categoryName')?.touched && categoryForm.get('categoryName')?.errors){
+                    @if(categoryForm.get('categoryName')?.errors?.['required']){
+                    <small class="text-danger error-text"><i class="fa-solid fa-circle-exclamation me-1"></i>Name is
+                      required</small>
+                    }
+                    @if(categoryForm.get('categoryName')?.errors?.['minlength']){
+                    <small class="text-danger error-text"><i class="fa-solid fa-circle-exclamation me-1"></i>Min 3
+                      characters required</small>
+                    }
+                    }
+                  </div>
+
+                  <!-- Status -->
+                  <div class="col-md-6">
+                    <label class="form-label">
+                      <i class="fa-solid fa-toggle-on me-1"></i>Status
+                    </label>
+                    <div class="status-toggle">
+                      <div class="form-check form-switch">
+                        <input class="form-check-input" type="checkbox" id="isActive" role="switch"
+                          formControlName="isActive">
+                        <label class="form-check-label ms-2" for="isActive">
+                          <span class="status-badge" [class.active]="categoryForm.get('isActive')?.value">
+                            <i class="fa-solid fa-check me-1"></i>@if(categoryForm.get('isActive')?.value){Active} @else
+                            {Inactive}
+                          </span>
+                        </label>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Form Actions -->
+                  <div class="col-12">
+                    <div class="form-actions">
+                      <button type="submit" class="btn btn-primary" [disabled]="isLoading">
+                        @if(isLoading){
+                        <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                        Saving...
+                        } @else {
+                        <i class="fa-solid fa-check me-2"></i>@if(isEditMode){Update Category} @else {Save Category}
+                        }
+                      </button>
+                      <button type="button" class="btn btn-outline-secondary" (click)="resetForm()">
+                        <i class="fa-solid fa-rotate-left me-2"></i>Reset
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+        }
+
+        <div class="table-card">
+          <div class="table-responsive custom-scrollbar">
+            <table class="table table-hover mb-0 align-middle">
+              <thead class="table-header">
                 <tr>
-                  <th scope="col" class="ps-4">#</th>
-                  <th scope="col">Category Name</th>
-                  <th scope="col">Status</th>
-                  <th scope="col" class="text-end pe-4">Actions</th>
+                  <th scope="col" class="text-center" style="width: 60px;">
+                    <i class="fa-solid fa-hashtag"></i> #
+                  </th>
+                  <th scope="col">
+                    <i class="fa-solid fa-folder me-1"></i> Category Name
+                  </th>
+                  <th scope="col" class="text-center" style="width: 120px;">
+                    <i class="fa-solid fa-toggle-on me-1"></i> Status
+                  </th>
+                  <th scope="col" class="text-center" style="width: 140px;">
+                    <i class="fa-solid fa-sliders me-1"></i> Actions
+                  </th>
                 </tr>
               </thead>
               <tbody>
                 @for (item of categoryDataRes(); track $index) {
-                <tr>
-                  <td class="ps-4">{{$index + 1}}</td>
-                  <td>{{item.categoryName ? item.categoryName : '-'}}</td>
+                <tr class="table-row">
+                  <td class="text-center">
+                    <span class="serial-number">{{$index + 1}}</span>
+                  </td>
                   <td>
+                    <div class="category-info">
+                      <div class="category-icon">
+                        <i class="fa-solid fa-layer-group"></i>
+                      </div>
+                      <span class="category-name">{{item.categoryName ? item.categoryName : '-'}}</span>
+                    </div>
+                  </td>
+                  <td class="text-center">
                     @if(item.isActive == true){
-                    <span class="badge bg-success-subtle text-success">{{item.isActive }}</span>
+                    <span class="status-pill active">
+                      <span class="status-dot"></span>
+                      Active
+                    </span>
                     }@else{
-                    <span class="badge bg-success-subtle text-danger">{{item.isActive }}</span>
+                    <span class="status-pill inactive">
+                      <span class="status-dot"></span>
+                      Inactive
+                    </span>
                     }
                   </td>
-                  <td class="text-end pe-4">
-                    <button class="btn btn-sm btn-outline-primary me-1" (click)="editCategory(item)" title="Edit">
-                      <i class="fa-solid fa-pen-to-square"></i>
-                    </button>
-                    <button class="btn btn-sm btn-outline-danger" (click)="deleteCategory(item.categoryId)" title="Delete">
-                      <i class="fa-solid fa-trash"></i>
-                    </button>
+                  <td class="text-center">
+                    <div class="action-buttons">
+                      <button class="btn btn-icon btn-outline-primary" (click)="editCategory(item)" title="Edit">
+                        <i class="fa-solid fa-pen-to-square"></i>
+                      </button>
+                      <button class="btn btn-icon btn-outline-danger" (click)="openDeleteModal(item.categoryId)"
+                        title="Delete">
+                        <i class="fa-solid fa-trash"></i>
+                      </button>
+                    </div>
                   </td>
-
+                </tr>
+                } @empty {
+                <tr>
+                  <td colspan="4" class="text-center py-5">
+                    <div class="empty-state">
+                      <div class="empty-icon">
+                        <i class="fa-solid fa-folder-open"></i>
+                      </div>
+                      <h6 class="mb-2">No categories found</h6>
+                      <p class="text-muted mb-3">Click "Add Category" to create your first category</p>
+                      <button class="btn btn-primary btn-sm" (click)="toggleForm()">
+                        <i class="fa-solid fa-plus me-1"></i>Add Category
+                      </button>
+                    </div>
+                  </td>
                 </tr>
                 }
-
               </tbody>
             </table>
           </div>
         </div>
-        <div class="card-footer bg-white py-3 border-top">
-          <!-- <div class="d-flex justify-content-between align-items-center">
-            <span class="text-muted small">Showing 5 of 5 entries</span>
-            <nav aria-label="Page navigation">
-              <ul class="pagination pagination-sm mb-0">
-                <li class="page-item disabled"><a class="page-link" href="#">Previous</a></li>
-                <li class="page-item active"><a class="page-link" href="#">1</a></li>
-                <li class="page-item disabled"><a class="page-link" href="#">Next</a></li>
-              </ul>
-            </nav>
-          </div> -->
+
+        @if(categoryDataRes().length > 0){
+        <div class="table-footer">
+          <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+            <div class="footer-info">
+              <span class="footer-stat">
+                <i class="fa-solid fa-layer-group me-1"></i>
+                {{categoryDataRes().length}} Categories
+              </span>
+              <span class="footer-divider">|</span>
+              <span class="footer-stat text-success">
+                <i class="fa-solid fa-check-circle me-1"></i>
+                Active: {{activeCount()}}
+              </span>
+              <span class="footer-divider">|</span>
+              <span class="footer-stat text-danger">
+                <i class="fa-solid fa-times-circle me-1"></i>
+                Inactive: {{inactiveCount()}}
+              </span>
+            </div>
+            <div class="footer-pagination">
+              <span class="text-muted small">
+                Showing 1 to {{categoryDataRes().length}} of {{categoryDataRes().length}} entries
+              </span>
+            </div>
+          </div>
         </div>
+        }
       </div>
     </div>
   </div>
 
+  <!-- Delete Confirmation Modal -->
+  @if(showDeleteModal()) {
+  <div class="modal-overlay" (click)="closeDeleteModal()">
+    <div class="delete-modal" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <div class="modal-icon">
+          <i class="fa-solid fa-triangle-exclamation"></i>
+        </div>
+        <h5 class="modal-title">Delete Confirmation</h5>
+        <button type="button" class="modal-close" (click)="closeDeleteModal()">
+          <i class="fa-solid fa-times"></i>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p class="modal-message">Are you sure to delete this record?</p>
+        <div class="form-group">
+          <label for="deleteRemark" class="form-label">
+            <i class="fa-solid fa-sticky-note me-1"></i>Remark <span class="text-muted">(Optional)</span>
+          </label>
+          <textarea 
+            class="form-control" 
+            id="deleteRemark" 
+            rows="2" 
+            placeholder="Enter reason for deletion..."
+            [value]="deleteRemark()"
+            (input)="deleteRemark.set($any($event.target).value)"
+          ></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-cancel" (click)="closeDeleteModal()">
+          <i class="fa-solid fa-times me-2"></i>No
+        </button>
+        <button type="button" class="btn btn-confirm" (click)="confirmDelete()">
+          <i class="fa-solid fa-check me-2"></i>Yes
+        </button>
+      </div>
+    </div>
+  </div>
+  }
 </div>
