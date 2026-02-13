@@ -7,10 +7,11 @@ import { AlertService } from '../../share/alert/alert.service';
 import { createCategory, updateCategory } from '../service/api-requestbody';
 import { validate } from '@angular/forms/signals';
 import { NgbPagination } from '@ng-bootstrap/ng-bootstrap';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-enquiry-category',
-  imports: [ReactiveFormsModule, CommonModule,NgbPagination],
+  imports: [ReactiveFormsModule, CommonModule, NgbPagination, FormsModule],
   templateUrl: './enquiry-category.html',
   styleUrl: './enquiry-category.css',
 })
@@ -34,18 +35,31 @@ export class EnquiryCategory {
   // Filter state
   statusFilter = signal<'all' | 'active' | 'inactive'>('all');
 
-  // Filtered data based on status filter
+  // Search term
+  searchTerm = signal<string>('');
+
+  // Filtered data based on status filter and search term
   filteredData = computed(() => {
     const filter = this.statusFilter();
+    const search = this.searchTerm().toLowerCase().trim();
     const data = this.categoryDataRes();
     
-    if (filter === 'all') {
-      return data;
-    } else if (filter === 'active') {
-      return data.filter(item => item.isActive === true);
-    } else {
-      return data.filter(item => item.isActive === false);
+    let filtered = data;
+    
+    if (filter === 'active') {
+      filtered = data.filter(item => item.isActive === true);
+    } else if (filter === 'inactive') {
+      filtered = data.filter(item => item.isActive === false);
     }
+    
+    // Apply search filter
+    if (search) {
+      filtered = filtered.filter(item => 
+        item.categoryName.toLowerCase().includes(search)
+      );
+    }
+    
+    return filtered;
   });
 
   // Computed values for footer stats
@@ -69,7 +83,8 @@ export class EnquiryCategory {
 
 
 
-  constructor(private service: AllServices, private alert: AlertService, private destroyRef: DestroyRef, private cdr: ChangeDetectorRef) { }
+  constructor(private service: AllServices, private alert: AlertService, private destroyRef: DestroyRef, 
+    private cdr: ChangeDetectorRef) { }
 
 
   ngOnInit() {
@@ -210,6 +225,39 @@ export class EnquiryCategory {
   setStatusFilter(filter: 'all' | 'active' | 'inactive') {
     this.statusFilter.set(filter);
     this.page.set(1); // Reset to first page when filter changes
+    this.setPageData();
+    this.cdr.markForCheck();
+  }
+
+  // Search methods
+  setSearchTerm(term: string) {
+    this.searchTerm.set(term);
+    this.page.set(1); // Reset to first page when search changes
+    this.setPageData();
+    this.cdr.markForCheck();
+  }
+
+  clearSearch() {
+    this.searchTerm.set('');
+    this.page.set(1);
+    this.setPageData();
+    this.cdr.markForCheck();
+  }
+
+  // Refresh/Reset all filters
+  refreshData() {
+    this.searchTerm.set('');
+    this.pageSize.set(10);
+    this.page.set(1);
+    this.setStatusFilter('all');
+    this.categoryDataDetails();
+    this.cdr.markForCheck();
+  }
+
+  // Set page size
+  setPageSize(size: number) {
+    this.pageSize.set(size);
+    this.page.set(1); // Reset to first page when page size changes
     this.setPageData();
     this.cdr.markForCheck();
   }

@@ -23,6 +23,9 @@
   "private": true,
   "packageManager": "npm@10.9.2",
   "dependencies": {
+    "@amcharts/amcharts5": "^5.15.6",
+    "@amcharts/amcharts5-fonts": "^5.0.1",
+    "@amcharts/amcharts5-geodata": "^5.1.5",
     "@angular/common": "^21.1.0",
     "@angular/compiler": "^21.1.0",
     "@angular/core": "^21.1.0",

@@ -82,7 +82,7 @@ export class Login {
           this.isLoading = false;
           // Dispatch custom event to notify header component in same tab
           window.dispatchEvent(new Event('login-state-change'));
-          this.route.navigateByUrl('/dashboard');
+          this.route.navigateByUrl('/enquirydetails');
         },   error: (err: any) => {
         this.isLoading = false;
         this.alert.error(err.error?.message || 'login Failed');

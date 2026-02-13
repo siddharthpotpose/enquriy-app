@@ -1,1 +1,247 @@
-<p>dashboard works!</p>
+<div class="dashboard-container">
+  <!-- Summary Cards Row -->
+  <div class="summary-row">
+    <!-- Total Card -->
+    <div class="summary-card total" [class.active]="statusFilter === 'all' && categoryFilter === 'all'" (click)="clearFilters()">
+      <div class="card-inner">
+        <div class="card-icon">
+          <i class="fa-solid fa-layer-group"></i>
+        </div>
+        <div class="card-details">
+          <span class="card-value">{{totalEnquiries()}}</span>
+          <span class="card-label">Total Enquiries</span>
+        </div>
+      </div>
+      <div class="card-progress">
+        <div class="progress-bar" [style.width.%]="getStatusPercentage('total')"></div>
+      </div>
+    </div>
+
+    <!-- Pending Card -->
+    <div class="summary-card pending" [class.active]="statusFilter === 'Pending'" (click)="statusFilter = 'Pending'">
+      <div class="card-inner">
+        <div class="card-icon">
+          <i class="fa-solid fa-clock"></i>
+        </div>
+        <div class="card-details">
+          <span class="card-value">{{pendingEnquiries()}}</span>
+          <span class="card-label">Pending</span>
+        </div>
+      </div>
+      <div class="card-progress">
+        <div class="progress-bar bg-warning" [style.width.%]="getStatusPercentage('pending')"></div>
+      </div>
+    </div>
+
+    <!-- In Progress Card -->
+    <div class="summary-card progress" [class.active]="statusFilter === 'In Progress'" (click)="statusFilter = 'In Progress'">
+      <div class="card-inner">
+        <div class="card-icon">
+          <i class="fa-solid fa-spinner fa-spin"></i>
+        </div>
+        <div class="card-details">
+          <span class="card-value">{{inProgressEnquiries()}}</span>
+          <span class="card-label">In Progress</span>
+        </div>
+      </div>
+      <div class="card-progress">
+        <div class="progress-bar bg-info" [style.width.%]="getStatusPercentage('inprogress')"></div>
+      </div>
+    </div>
+
+    <!-- Completed Card -->
+    <div class="summary-card completed" [class.active]="statusFilter === 'Completed'" (click)="statusFilter = 'Completed'">
+      <div class="card-inner">
+        <div class="card-icon">
+          <i class="fa-solid fa-check-circle"></i>
+        </div>
+        <div class="card-details">
+          <span class="card-value">{{completedEnquiries()}}</span>
+          <span class="card-label">Completed</span>
+        </div>
+      </div>
+      <div class="card-progress">
+        <div class="progress-bar bg-success" [style.width.%]="getStatusPercentage('completed')"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Charts Section -->
+  <div class="charts-section">
+    <!-- Status Pie Chart -->
+    <div class="chart-card">
+      <div class="chart-header">
+        <div class="chart-title">
+          <i class="fa-solid fa-chart-pie me-2"></i>
+          <span>Enquiries by Status</span>
+        </div>
+        <div class="chart-badge">{{statusChartData.length}} statuses</div>
+      </div>
+      <div class="chart-body">
+        @if(statusChartData.length > 0){
+          <div #statusChartContainer class="am5-chart-container"></div>
+        } @else {
+          <div class="no-data">
+            <i class="fa-solid fa-chart-pie fa-2x"></i>
+            <p>No status data available</p>
+          </div>
+        }
+      </div>
+    </div>
+
+    <!-- Category Bar Chart -->
+    <div class="chart-card">
+      <div class="chart-header">
+        <div class="chart-title">
+          <i class="fa-solid fa-chart-bar me-2"></i>
+          <span>Enquiries by Category</span>
+        </div>
+        <div class="chart-badge">{{categoryChartData.length}} categories</div>
+      </div>
+      <div class="chart-body">
+        @if(categoryChartData.length > 0){
+          <div #categoryChartContainer class="am5-chart-container"></div>
+        } @else {
+          <div class="no-data">
+            <i class="fa-solid fa-chart-bar fa-2x"></i>
+            <p>No category data available</p>
+          </div>
+        }
+      </div>
+    </div>
+  </div>
+
+  <!-- Enquiry Table Section -->
+  <div class="table-section">
+    <div class="table-header-row">
+      <div class="table-title">
+        <i class="fa-solid fa-list me-2"></i>
+        <span>Recent Enquiries</span>
+      </div>
+      <div class="table-actions">
+        <div class="search-input">
+          <i class="fa-solid fa-search"></i>
+          <input type="text" placeholder="Search..." [(ngModel)]="searchTerm">
+        </div>
+        <select class="filter-select" [(ngModel)]="statusFilter">
+          <option value="all">All Status</option>
+          @for(s of statuses(); track s.statusId){
+            <option [value]="s.statusName">{{s.statusName}}</option>
+          }
+        </select>
+        <select class="filter-select" [(ngModel)]="categoryFilter">
+          <option value="all">All Categories</option>
+          @for(c of categories(); track c.categoryId){
+            <option [value]="c.categoryName">{{c.categoryName}}</option>
+          }
+        </select>
+        @if(statusFilter !== 'all' || categoryFilter !== 'all' || searchTerm){
+          <button class="btn-clear" (click)="clearFilters()">
+            <i class="fa-solid fa-times"></i> Clear
+          </button>
+        }
+      </div>
+    </div>
+
+    <!-- Table -->
+    <div class="table-container">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th class="text-center">#</th>
+            <th>Enquiry No</th>
+            <th>Customer</th>
+            <th>Email</th>
+            <th>Phone</th>
+            <th>Category</th>
+            <th>Status</th>
+            <th class="text-center">Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          @if(isLoading()){
+            <tr>
+              <td colspan="8" class="loading-cell">
+                <div class="spinner-container">
+                  <div class="spinner-border text-primary"></div>
+                  <p>Loading...</p>
+                </div>
+              </td>
+            </tr>
+          } @else if(filteredEnquiries().length === 0){
+            <tr>
+              <td colspan="8" class="empty-cell">
+                <div class="empty-state">
+                  <i class="fa-solid fa-inbox"></i>
+                  <p>No enquiries found</p>
+                  <button class="btn btn-primary btn-sm" (click)="navigateToSubmitEnquiry()">
+                    <i class="fa-solid fa-plus"></i> Create Enquiry
+                  </button>
+                </div>
+              </td>
+            </tr>
+          } @else {
+            @for(enquiry of filteredEnquiries(); track enquiry.enquiryId; let i = $index){
+              <tr>
+                <td class="text-center text-muted">{{(page - 1) * pageSize + i + 1}}</td>
+                <td class="fw-bold text-primary">{{enquiry.enquiryNo}}</td>
+                <td>
+                  <div class="customer-info">
+                    <div class="customer-avatar">
+                      <i class="fa-solid fa-user"></i>
+                    </div>
+                    <span>{{enquiry.customerName}}</span>
+                  </div>
+                </td>
+                <td>
+                  <a [href]="'mailto:' + enquiry.customerEmail" class="text-decoration-none">
+                    {{enquiry.customerEmail}}
+                  </a>
+                </td>
+                <td>
+                  <a [href]="'tel:' + enquiry.customerPhone" class="text-decoration-none">
+                    {{enquiry.customerPhone}}
+                  </a>
+                </td>
+                <td>
+                  <span class="category-chip">{{enquiry.categoryName}}</span>
+                </td>
+                <td>
+                  <span class="status-chip" [ngClass]="getStatusColor(enquiry.statusName)">
+                    <i class="fa-solid" [ngClass]="getStatusIcon(enquiry.statusName)"></i>
+                    {{enquiry.statusName}}
+                  </span>
+                </td>
+                <td class="text-center">
+                  <button class="btn-view" (click)="viewEnquiryDetails(enquiry)" title="View Details">
+                    <i class="fa-solid fa-eye"></i>
+                  </button>
+                </td>
+              </tr>
+            }
+          }
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Pagination -->
+    @if(filteredEnquiries().length > 0){
+      <div class="pagination-row">
+        <div class="pagination-info">
+          Showing {{getPageStart()}} to {{getPageEnd()}} of {{totalRecords}} entries
+        </div>
+        <div class="pagination-controls">
+          <ngb-pagination
+            [collectionSize]="totalRecords"
+            [(page)]="page"
+            [pageSize]="pageSize"
+            [maxSize]="5"
+            [rotate]="true"
+            [boundaryLinks]="true"
+            (pageChange)="onPageChange($event)">
+          </ngb-pagination>
+        </div>
+      </div>
+    }
+  </div>
+</div>

@@ -161,7 +161,42 @@
         </div>
         }
 
-       
+        <div class="row mb-1 mt-2">
+          <div class="col-md-4">
+            <div class="search-box">
+              <div class="input-group">
+                <span class="input-group-text bg-white">
+                  <i class="fa-solid fa-search text-muted"></i>
+                </span>
+                <input type="text" class="form-control" placeholder="Search by category name..."
+                  [ngModel]="searchTerm()" (ngModelChange)="setSearchTerm($event)">
+                @if(searchTerm()){
+                <button class="btn btn-outline-secondary" type="button" (click)="clearSearch()" title="Clear search">
+                  <i class="fa-solid fa-times"></i>
+                </button>
+                }
+                <button class="btn btn-primary" type="button" (click)="refreshData()" title="Refresh">
+                  <i class="fa-solid fa-rotate-right"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-2"></div>
+          <div class="col-md-6">
+            <div class="items-per-page d-flex justify-content-md-end align-items-center">
+              <label for="pageSize" class="me-2 text-muted mb-0">
+                <small>Items per page:</small>
+              </label>
+              <select class="form-select form-select-sm" id="pageSize" style="width: auto;"
+                [ngModel]="pageSize()" (ngModelChange)="setPageSize($event)">
+                <option [value]="10">10</option>
+                <option [value]="20">20</option>
+                <option [value]="50">50</option>
+                <option [value]="100">100</option>
+              </select>
+            </div>
+          </div>
+        </div>
 
         <div class="table-card">
           <div class="table-responsive custom-scrollbar">
