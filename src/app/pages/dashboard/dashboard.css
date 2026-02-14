@@ -1,3 +1,4 @@
+
 /* Dashboard Container */
 .dashboard-container {
   padding: 1.25rem;
@@ -205,7 +206,7 @@
 }
 
 .chart-body {
-  padding: 1.25rem;
+  /* padding: 1.25rem; */
 }
 
 .am5-chart-container {

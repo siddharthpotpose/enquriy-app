@@ -215,8 +215,9 @@ export class EnquiryCategory {
         this.categoryDataRes.set(res.data || []);
         this.setPageData();
         console.log(this.categoryDataRes);
-      }, error(err) {
-        alert(err.error.message);
+      },
+      error: (err: any) => {
+        this.alert.error(err.error?.message || 'Failed to load categories');
       },
     })
   }
@@ -263,8 +264,8 @@ export class EnquiryCategory {
   }
 
   totalRecords = signal(0);
-  page = signal<any>(1);
-  pageSize = signal<any>(10);
+  page = signal<number>(1);
+  pageSize = signal<number>(10);
 
   // Get filtered total records
   getFilteredTotalRecords(): number {

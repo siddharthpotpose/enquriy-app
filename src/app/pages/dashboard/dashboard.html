@@ -34,10 +34,13 @@
     </div>
 
     <!-- In Progress Card -->
-    <div class="summary-card progress" [class.active]="statusFilter === 'In Progress'" (click)="statusFilter = 'In Progress'">
+ 
+
+
+        <div class="summary-card pending" [class.active]="statusFilter === 'In Progress'" (click)="statusFilter = 'In Progress'">
       <div class="card-inner">
         <div class="card-icon">
-          <i class="fa-solid fa-spinner fa-spin"></i>
+        <i class="fa-solid fa-spinner fa-spin"></i>
         </div>
         <div class="card-details">
           <span class="card-value">{{inProgressEnquiries()}}</span>
