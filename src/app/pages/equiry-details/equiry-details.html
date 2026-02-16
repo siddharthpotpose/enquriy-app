@@ -27,96 +27,197 @@
         </div>
       </div>
     </div>
-    <div class="page-header-bottom"></div> 
+    <div class="page-header-bottom"></div>
   </div>
 
   <!-- Loading State -->
   @if (isLoading()) {
-    <div class="loading-container">
-      <div class="spinner-border text-primary" role="status">
-        <span class="visually-hidden">Loading...</span>
-      </div>
-      <p class="mt-2">Loading enquiry details...</p>
+  <div class="loading-container">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Loading...</span>
     </div>
+    <p class="mt-2">Loading enquiry details...</p>
+  </div>
   }
 
   <!-- Error State -->
   @if (errorMessage()) {
-    <div class="error-container">
-      <div class="alert alert-danger">
-        <i class="fas fa-exclamation-triangle"></i>
-        <p>{{ errorMessage() }}</p>
-        <button class="btn btn-primary mt-2" (click)="retryLoad()">
-          <i class="fas fa-redo"></i> Retry
-        </button>
-      </div>
+  <div class="error-container">
+    <div class="alert alert-danger">
+      <i class="fas fa-exclamation-triangle"></i>
+      <p>{{ errorMessage() }}</p>
+      <button class="btn btn-primary mt-2" (click)="retryLoad()">
+        <i class="fas fa-redo"></i> Retry
+      </button>
     </div>
+  </div>
   }
 
   <!-- Empty State -->
   @if (!isLoading() && !errorMessage() && pagedData().length === 0) {
-    <div class="empty-container">
-      <div class="empty-state">
-        <i class="fas fa-inbox empty-icon"></i>
-        <h4>No Enquiries Found</h4>
-        <p>There are no enquiry details to display at this time.</p>
-      </div>
+  <div class="empty-container">
+    <div class="empty-state">
+      <i class="fas fa-inbox empty-icon"></i>
+      <h4>No Enquiries Found</h4>
+      <p>There are no enquiry details to display at this time.</p>
     </div>
+  </div>
   }
 
   <!-- Cards Row -->
   @if (!isLoading() && !errorMessage()) {
-    <div class="row g-4 mb-4">
-      @for(item of pagedData(); track $index) {
-      <div class="col-xl-3 col-lg-4 col-md-6 col-sm-12">
+  <div class="row g-4 mb-4">
+    @for(item of pagedData(); track $index) {
+    <div class="col-xl-3 col-lg-4 col-md-6 col-sm-12">
 
-        <div class="enquiry-card">
-          <div class="card-header-custom">
-            <div class="user-avatar">JD</div>
-            <div class="user-info">
-              <h5 class="user-name">{{item.customerName ? item.customerName : '-'}}</h5>
-              <span class="enquiry-id">{{item.enquiryId ? item.enquiryId : '-'}}</span>
-            </div>
-          </div>
-          <div class="card-body-custom">
-            <div class="info-row">
-              <span class="info-label">Email:</span>
-              <span class="info-value">{{item.customerEmail ? item.customerEmail : '-'}}</span>
-            </div>
-            <div class="info-row">
-              <span class="info-label">Phone:</span>
-              <span class="info-value">{{item.customerPhone ? item.customerPhone : '-'}}</span>
-            </div>
-            <div class="info-row">
-              <span class="info-label">Service:</span>
-              <span class="info-value">{{item.enquiryType ? item.enquiryType : '-'}}</span>
-            </div>
-            <div class="info-row">
-              <span class="info-label">Date:</span>
-              <span class="info-value"> {{ item.enquiryDate | date:'dd-MMM-yyyy' }}</span>
-            </div>
-            <div class="info-row">
-              <span class="info-label">Message</span>
-              <span class="info-value">{{item.message ? item.message : '-'}}</span>
-            </div>
-          </div>
-          <div class="card-footer-custom">
-            <button class="btn-action btn-edit">Edit</button>
-            <button class="btn-action btn-view">Delete</button>
+      <div class="enquiry-card">
+        <div class="card-header-custom">
+          <div class="user-avatar">JD</div>
+          <div class="user-info">
+            <h5 class="user-name">{{item.customerName ? item.customerName : '-'}}</h5>
+            <span class="enquiry-id">{{item.enquiryId ? item.enquiryId : '-'}}</span>
           </div>
         </div>
+        <div class="card-body-custom">
+          <div class="info-row">
+            <span class="info-label">Email:</span>
+            <span class="info-value">{{item.customerEmail ? item.customerEmail : '-'}}</span>
+          </div>
+          <div class="info-row">
+            <span class="info-label">Phone:</span>
+            <span class="info-value">{{item.customerPhone ? item.customerPhone : '-'}}</span>
+          </div>
+          <div class="info-row">
+            <span class="info-label">Service:</span>
+            <span class="info-value">{{item.enquiryType ? item.enquiryType : '-'}}</span>
+          </div>
+          <div class="info-row">
+            <span class="info-label">Date:</span>
+            <span class="info-value"> {{ item.enquiryDate | date:'dd-MMM-yyyy' }}</span>
+          </div>
+          <div class="info-row">
+            <span class="info-label">Message</span>
+            <span class="info-value">{{item.message ? item.message : '-'}}</span>
+          </div>
+        </div>
+        <div class="card-footer-custom">
+          <button class="btn-action btn-edit" data-bs-toggle="modal" data-bs-target="#editEnquiryModal"
+            (click)="editEnquiry(item)">
+            Edit
+          </button>
+          <button class="btn-action btn-view">Delete</button>
+        </div>
       </div>
-      }
     </div>
+    }
+  </div>
   }
 
   <!-- Pagination -->
   @if (totalRecords() > 0) {
-    <div class="pagination-wrapper mt-4">
-      <ngb-pagination [collectionSize]="totalRecords()" [pageSize]="pageSize()" [page]="page()"
-        (pageChange)="onPageChange($event)" [maxSize]="2" [boundaryLinks]="true">
-      </ngb-pagination>
-    </div>
+  <div class="pagination-wrapper mt-4">
+    <ngb-pagination [collectionSize]="totalRecords()" [pageSize]="pageSize()" [page]="page()"
+      (pageChange)="onPageChange($event)" [maxSize]="2" [boundaryLinks]="true">
+    </ngb-pagination>
+  </div>
   }
 
+</div>
+
+<!-- Edit Enquiry Modal -->
+<div class="modal fade" id="editEnquiryModal" tabindex="-1" aria-labelledby="editEnquiryModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);;">
+        <h5 class="modal-title text-light" id="editEnquiryModalLabel">Update Enquiry</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form [formGroup]="editEnquiryForm">
+          <div class="row">
+            <div class="col-6">
+              <div class="mb-3">
+                <label for="customerName" class="form-label">Customer Name</label>
+                <input type="text" class="form-control" id="customerName" formControlName="customerName">
+              </div>
+            </div>
+            <div class="col-6">
+              <div class="mb-3">
+                <label for="customerEmail" class="form-label">Customer Email</label>
+                <input type="email" class="form-control" id="customerEmail" formControlName="customerEmail">
+              </div>
+            </div>
+
+            <div class="col-6">
+              <div class="mb-3">
+                <label for="customerPhone" class="form-label">Customer Phone</label>
+                <input type="text" class="form-control" id="customerPhone" formControlName="customerPhone">
+              </div>
+            </div>
+
+            <div class="col-md-6">
+              <div class="mb-3">
+                <label class="form-label">Select Category</label>
+                <select formControlName="categoryId" class="form-control">
+                  @for(item of categoryResData(); track $index ){
+                  <option [value]="item.categoryId">{{item.categoryName}}</option>
+                  }
+                </select>
+              </div>
+            </div>
+
+            <div class="col-md-6">
+              <div class="mb-3">
+                <label for="" class="form-label">Select Status</label>
+                <select formControlName="statusId" class="form-control">
+                  @for(item of statusResData() ; track $index){
+                  <option [value]="item.statusId">{{item.statusName}}</option>
+                  }
+                </select>
+              </div>
+            </div>
+
+
+            <div class="col-md-6">
+              <label class="form-label">Enquiry Type *</label>
+              <select class="form-select" required formControlName="enquiryType">
+                <option value="" disabled selected>Select Type</option>
+                <option value="general">General Inquiry</option>
+                <option value="support">Product Support</option>
+                <option value="sales">Sales Question</option>
+                <option value="billing">Billing & Payment</option>
+                <option value="feedback">Feedback</option>
+                <option value="complaint">Complaint</option>
+              </select>
+            </div>
+
+            <div class="col-md-6">
+              <div class="mb-3">
+                <label class="form-label">Select Enquiry Date</label>
+                <input type="date" class="form-control" formControlName="enquiryDate">
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="mb-3">
+                <label class="form-label">Select Follow Up Date</label>
+                <input type="date" class="form-control" formControlName="followUpDate">
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <label for="message" class="form-label">Message</label>
+              <textarea class="form-control" id="message" rows="3" formControlName="message"></textarea>
+            </div>
+
+          </div>
+
+
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" (click)="cancelEdit()">Cancel</button>
+        <button type="button" class="btn btn-primary" (click)="submitUpdate()">Update</button>
+      </div>
+    </div>
+  </div>
 </div>

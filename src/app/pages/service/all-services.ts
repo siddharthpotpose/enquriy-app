@@ -21,6 +21,16 @@ export class AllServices {
   createEnquiry(obj:any){
    return this.http.post(`${environment.apiUrl}${'create-enquiry'}`,obj)  }
 
+   updateEnquiry(obj:any, id:any){
+    return this.http.put(`${environment.apiUrl}update-enquiry/${id}`,obj)
+   }
+
+   getEnquiryById(id:any){
+    return this.http.get(`${environment.apiUrl}get-enquiry/${id}`)
+   }
+
+
+
   login(obj:any){
     return this.http.post(`${environment.apiLoginUrl}${'login'}`,obj)
   }
