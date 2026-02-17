@@ -10,25 +10,75 @@
           <span class="subtitle-highlight">View and manage</span> all submitted enquiries
         </p>
       </div>
-      <div class="page-header-stats">
-        <div class="stat-item">
+      <div class="page-header-stats" style="cursor: pointer;">
+        <div class="stat-item" [class.active]="convertedFilter() === 'all'" (click)="setStatusFilter('all')">
           <span class="stat-number">{{ totalRecords() }}</span>
           <span class="stat-label">Total Enquiries</span>
         </div>
         <div class="stat-divider"></div>
-        <div class="stat-item">
-          <span class="stat-number stat-pending">03</span>
-          <span class="stat-label">Pending</span>
+        <div class="stat-item" [class.active]="convertedFilter() === 'isConvertedT'"
+          (click)="setStatusFilter('isConvertedT')">
+          <span class="stat-number stat-approved">{{isConvertedT() || '-'}}</span>
+          <span class="stat-label">Converted</span>
         </div>
         <div class="stat-divider"></div>
-        <div class="stat-item">
-          <span class="stat-number stat-approved">04</span>
-          <span class="stat-label">Approved</span>
+        <div class="stat-item" [class.active]="convertedFilter() === 'isConvertedF'"
+          (click)="setStatusFilter('isConvertedF')">
+          <span class="stat-number stat-pending">{{isConvertedF() || '-'}}</span>
+          <span class="stat-label">Not Converted</span>
         </div>
       </div>
     </div>
     <div class="page-header-bottom"></div>
   </div>
+
+  <div class="row mb-1 mt-2">
+    <div class="col-md-4">
+      <div class="search-box">
+        <div class="input-group">
+          <span class="input-group-text bg-white">
+            <i class="fa-solid fa-search text-muted"></i>
+          </span>
+          <input type="text" class="form-control" placeholder="Search by category name..." [ngModel]="searchTerm()"
+            (ngModelChange)="setSearchTerm($event)">
+          @if(searchTerm()){
+          <button class="btn btn-outline-secondary" type="button" (click)="clearSearch()" title="Clear search">
+            <i class="fa-solid fa-times"></i>
+          </button>
+          }
+          <button class="btn btn-primary" type="button" (click)="refreshData()" title="Refresh">
+            <i class="fa-solid fa-rotate-right"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-2">
+      @if(convertedFilter() === 'isConvertedT'){
+      <span class=" btn btn-sm  bg-success text-light">Converted - {{isConvertedT() || '-'}}</span>
+      }
+      @else if(convertedFilter() === 'isConvertedF'){
+      <span class="btn btn-sm  bg-danger text-light">Not Converted - {{isConvertedF() || '-'}}</span>
+      }@else {
+      <span class="btn btn-sm  bg-primary text-light">Total Enquiries - {{totalRecords()}}</span>
+      }
+    </div>
+    <div class="col-md-6">
+      <div class="items-per-page d-flex justify-content-md-end align-items-center">
+        <label for="pageSize" class="me-2 text-muted mb-0">
+          <small>Items per page:</small>
+        </label>
+        <select class="form-select form-select-sm" id="pageSize" style="width: auto;" [ngModel]="pageSize()"
+          (ngModelChange)="setPageSize($event)">
+          <option selected [value]="12">12</option>
+          <option [value]="20">20</option>
+          <option [value]="50">50</option>
+          <option [value]="100">100</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+
 
   <!-- Loading State -->
   @if (isLoading()) {
@@ -64,6 +114,8 @@
   </div>
   }
 
+
+
   <!-- Cards Row -->
   @if (!isLoading() && !errorMessage()) {
   <div class="row g-4 mb-4">
@@ -72,7 +124,7 @@
 
       <div class="enquiry-card">
         <div class="card-header-custom">
-          <div class="user-avatar">JD</div>
+          <div class="user-avatar">{{$index + 1}}</div>
           <div class="user-info">
             <h5 class="user-name">{{item.customerName ? item.customerName : '-'}}</h5>
             <span class="enquiry-id">{{item.enquiryId ? item.enquiryId : '-'}}</span>
@@ -105,7 +157,7 @@
             (click)="editEnquiry(item)">
             Edit
           </button>
-          <button class="btn-action btn-view">Delete</button>
+          <button class="btn-action btn-view" (click)="openDeleteModal(item.categoryId)">Delete</button>
         </div>
       </div>
     </div>
@@ -204,6 +256,16 @@
               </div>
             </div>
 
+            <div class="form-section">
+              <div class="form-check">
+                <input class="form-check-input" formControlName="isConverted" type="checkbox" id="isConverted">
+                <label class="form-check-label" for="isConverted">
+                  <strong>Convert to Lead</strong>
+                  <small class="text-muted d-block">Mark as potential sales lead</small>
+                </label>
+              </div>
+            </div>
+
             <div class="mb-3">
               <label for="message" class="form-label">Message</label>
               <textarea class="form-control" id="message" rows="3" formControlName="message"></textarea>
@@ -218,6 +280,40 @@
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" (click)="cancelEdit()">Cancel</button>
         <button type="button" class="btn btn-primary" (click)="submitUpdate()">Update</button>
       </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- Delete Confirmation Modal -->
+<div class="modal-overlay" *ngIf="showDeleteModal()" (click)="closeDeleteModal()">
+  <div class="delete-modal" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <div class="modal-icon">
+        <i class="fa-solid fa-triangle-exclamation"></i>
+      </div>
+      <h5 class="modal-title">Delete Confirmation</h5>
+      <button type="button" class="modal-close" (click)="closeDeleteModal()">
+        <i class="fa-solid fa-times"></i>
+      </button>
+    </div>
+    <div class="modal-body"> 
+      <p class="modal-message">Are you sure you want to delete this enquiry?</p>
+      <div class="form-group">
+        <label for="deleteRemark" class="form-label">
+          <i class="fa-solid fa-sticky-note me-1"></i>Remark <span class="text-muted">(Optional)</span>
+        </label>
+        <textarea class="form-control" id="deleteRemark" rows="2" placeholder="Enter reason for deletion..."
+          [value]="deleteRemark()" (input)="deleteRemark.set($any($event.target).value)"></textarea>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-cancel" (click)="closeDeleteModal()">
+        <i class="fa-solid fa-times me-2"></i>No
+      </button>
+      <button type="button" class="btn btn-confirm" (click)="confirmDelete()">
+        <i class="fa-solid fa-check me-2"></i>Yes
+      </button>
     </div>
   </div>
 </div>

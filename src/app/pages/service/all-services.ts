@@ -25,6 +25,14 @@ export class AllServices {
     return this.http.put(`${environment.apiUrl}update-enquiry/${id}`,obj)
    }
 
+     deleteEnquiry(id: any, remark?: string) {
+    let params = new HttpParams();
+    if (remark) {
+      params = params.set('remark', remark);
+    }
+    return this.http.delete(`${environment.apiUrl}delete-enquiry/${id}`, { params })
+  }
+
    getEnquiryById(id:any){
     return this.http.get(`${environment.apiUrl}get-enquiry/${id}`)
    }

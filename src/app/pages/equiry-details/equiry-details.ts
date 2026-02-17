@@ -1,9 +1,11 @@
-import { Component, signal, Signal } from '@angular/core';
+import { ChangeDetectorRef, Component, computed, signal, Signal } from '@angular/core';
 import { AllServices } from '../service/all-services';
 import { CommonModule, DatePipe, formatDate } from '@angular/common';
 import { NgbPagination } from '@ng-bootstrap/ng-bootstrap';
 import { AlertService } from '../../share/alert/alert.service';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { debounceTime, distinctUntilChanged, Subject } from 'rxjs';
+
 
 @Component({
   selector: 'app-equiry-details',
@@ -16,18 +18,30 @@ export class EquiryDetails {
   // Loading and error states
   isLoading = signal<boolean>(false);
   errorMessage = signal<string>('');
+ private searchSubject = new Subject<string>();
+
 
   resData = signal<any[]>([]);
   totalRecords = signal(0);
+  isConvertedT = signal<any>(0);
+  isConvertedF = signal<any>(0);
   page = signal<any>(1);
   pageSize = signal<any>(12);
 
 
-  constructor(private service: AllServices, private alertService: AlertService) { }
+  constructor(private service: AllServices, private alertService: AlertService, private cdr: ChangeDetectorRef) { }
 
   ngOnInit() {
     this.enquiriesDetails();
 
+  this.searchSubject.pipe(
+    debounceTime(400),
+    distinctUntilChanged()
+  ).subscribe(term => {
+    this.searchTerm.set(term.trim());
+    this.page.set(1);
+    this.setPageData();
+  });
   }
 
   categoryResData = signal<any[]>([])
@@ -60,6 +74,7 @@ export class EquiryDetails {
     statusId: new FormControl('', [Validators.required]),
     enquiryDate: new FormControl('', [Validators.required]),
     followUpDate: new FormControl('', [Validators.required]),
+    isConverted: new FormControl('', [Validators.required]),
     message: new FormControl('', [Validators.required])
   })
 
@@ -78,6 +93,10 @@ export class EquiryDetails {
         if (res && res.data) {
           this.allData.set(res.data || []);
           this.totalRecords.set((res.data || []).length);
+          // this.isConvertedT.set((res.data.isConverted == true || []).length );
+          // this.isConvertedF.set((res.data.isConverted == false || []).length);
+          this.isConvertedT.set(res.data.filter((item: any) => item.isConverted == true).length);
+          this.isConvertedF.set(res.data.filter((item: any) => item.isConverted == false).length);
           this.page.set(1);
           this.setPageData();
         } else {
@@ -127,6 +146,7 @@ export class EquiryDetails {
       statusId: item.statusId || '',
       enquiryDate: formatDate(item.enquiryDate || ''),
       followUpDate: formatDate(item.followUpDate || ''),
+      isConverted: item.isConverted || '',
       message: item.message || ''
     });
     // If item has full details, set directly
@@ -176,6 +196,8 @@ export class EquiryDetails {
         this.editingEnquiry.set(null);
         this.enquiriesDetails();
         this.isLoading.set(false);
+        
+        
       },
       error: (err: any) => {
         this.alertService.error(err.message || 'Update failed');
@@ -199,9 +221,13 @@ export class EquiryDetails {
     const end = start + this.pageSize();
 
     this.pagedData.set(
-      this.allData().slice(start, end)
+      this.filterData().slice(start, end)
     );
+    this.totalRecords.set(this.filterData().length);
+
   }
+
+
 
   onPageChange(page: number) {
     this.page.set(page);
@@ -212,5 +238,132 @@ export class EquiryDetails {
   retryLoad() {
     this.enquiriesDetails();
   }
+
+
+  searchTerm = signal<string>('');
+  convertedFilter = signal<'all' | 'isConvertedT' | 'isConvertedF'>('all')
+
+  filterData = computed(() => {
+    const search = this.searchTerm().toLowerCase().trim();
+    const filter = this.convertedFilter();
+
+    const data = this.allData();
+
+    let filtered = data;
+
+
+    if (filter == 'isConvertedT') {
+      filtered = data.filter(item => item.isConverted == true)
+    } else if (filter == 'isConvertedF') {
+      filtered = data.filter(item => item.isConverted == false)
+    }
+
+    // if (search) {
+    //   filtered = filtered.filter(item => item.categoryName.toLowerCase().includes(search))
+    // }
+
+    if (search) {
+      const searchLower = search.toLowerCase();
+      filtered = filtered.filter(item =>
+        item?.customerName?.toLowerCase()?.includes(searchLower)
+      );
+    }
+
+
+    return filtered;
+
+  })
+
+
+  // Set status filter
+  setStatusFilter(filter: 'all' | 'isConvertedT' | 'isConvertedF') {
+    this.isLoading.set(true);
+    setTimeout(() => {
+      this.convertedFilter.set(filter);
+      this.page.set(1); // Reset to first page when filter changes
+      this.setPageData();
+      this.cdr.markForCheck();
+      this.isLoading.set(false)
+    }, 300);
+  }
+
+  // Search methods
+  setSearchTerm(term: string) {
+    this.searchSubject.next(term);
+
+      // this.searchTerm.set(term);
+      // this.page.set(1); // Reset to first page when search changes
+      // this.setPageData();
+      // this.cdr.markForCheck();
+  
+
+  }
+
+  clearSearch() {
+    this.searchTerm.set('');
+    this.page.set(1);
+    this.setPageData();
+    this.cdr.markForCheck();
+  }
+
+  // Refresh/Reset all filters
+  refreshData() {
+    this.searchTerm.set('');
+    this.pageSize.set(12);
+    this.page.set(1);
+    this.allData
+    this.setStatusFilter('all');
+    this.enquiriesDetails();
+    this.cdr.markForCheck();
+  }
+
+  // Set page size
+  setPageSize(size: number) {
+    this.isLoading.set(true);
+    setTimeout(() => {
+      this.pageSize.set(size);
+      this.page.set(1); // Reset to first page when page size changes
+      this.setPageData();
+      this.cdr.markForCheck();
+      this.isLoading.set(false);
+    }, 300);
+  }
+
+
+  deleteRemark = signal<string>('');
+  showDeleteModal = signal<boolean>(false);
+
+
+  openDeleteModal(categoryId: number) {
+    this.editingEnquiry.set(categoryId);
+    this.deleteRemark.set('');
+    this.showDeleteModal.set(true);
+  }
+
+  closeDeleteModal() {
+    this.showDeleteModal.set(false);
+    this.editingEnquiry.set(null);
+    this.deleteRemark.set('');
+  }
+
+  confirmDelete() {
+    const categoryId = this.editingEnquiry();
+    if (categoryId) {
+      const remark = this.deleteRemark() || undefined;
+      this.service.deleteEnquiry(categoryId,remark).subscribe({
+        next: (res: any) => {
+          this.alertService.success(res.message || 'Category deleted');
+          this.closeDeleteModal();
+          this.enquiriesDetails();
+        },
+        error: (err: any) => {
+          this.alertService.error(err.error?.message || 'Delete failed');
+          this.closeDeleteModal();
+        }
+      });
+    }
+  }
+
+
 
 }
