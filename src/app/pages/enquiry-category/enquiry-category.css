@@ -1,79 +1,69 @@
-/* Pagination Styles - Professional Circle Design */
-::ng-deep .pagination-wrapper {
+/* Pagination Styles */
+.pagination-row {
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 8px;
+  padding: 1rem 0.25rem;
+  border-top: 1px solid #e2e8f0;
+  flex-wrap: wrap;
+  gap: 12px;
 }
 
-::ng-deep ngb-pagination {
+.pagination-info {
+  font-size: 0.85rem;
+  color: #718096;
+}
+
+.pagination-controls {
   display: flex;
-  align-items: center;
+  justify-content: flex-end;
 }
 
 ::ng-deep ngb-pagination .pagination {
   display: flex;
   align-items: center;
   gap: 6px;
-  margin: 0 !important;
-  padding: 10px 15px;
-  background: #fff;
-  border-radius: 50px;
-  box-shadow: 0 2px 15px rgba(0, 0, 0, 0.08);
+  margin: 0;
+  padding: 6px 10px;
+  background: #f7fafc;
+  border-radius: 10px;
 }
 
 ::ng-deep ngb-pagination .page-link {
-  width: 38px !important;
-  height: 38px !important;
-  border-radius: 50% !important;
-  border: none !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  font-weight: 600 !important;
-  font-size: 0.875rem !important;
-  color: #667eea !important;
-  background: #f8f9fa !important;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
-  position: relative !important;
-  overflow: hidden !important;
+  width: 32px;
+  height: 32px;
+  border: none;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 0.85rem;
+  color: #667eea;
+  background: #fff;
+  transition: all 0.2s;
 }
 
 ::ng-deep ngb-pagination .page-link:hover {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
-  color: #fff !important;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
-}
-
-::ng-deep ngb-pagination .page-link:focus {
-  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.25) !important;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: #fff;
 }
 
 ::ng-deep ngb-pagination .page-item.active .page-link {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
-  color: #fff !important;
-  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: #fff;
 }
 
 ::ng-deep ngb-pagination .page-item.disabled .page-link {
-  background: #f8f9fa !important;
-  color: #adb5bd !important;
-  transform: none !important;
-  box-shadow: none !important;
+  background: transparent;
+  color: #a0aec0;
 }
 
 ::ng-deep ngb-pagination .page-item:first-child .page-link,
 ::ng-deep ngb-pagination .page-item:last-child .page-link {
-  border-radius: 50px !important;
-  width: auto !important;
-  padding: 0 15px !important;
-}
-
-/* Footer Pagination Info */
-.footer-pagination .text-muted {
-  font-size: 0.8rem;
-  font-weight: 500;
+  width: auto;
+  padding: 0 12px;
+  border-radius: 8px;
 }
 
 /* Custom scrollbar for the table */

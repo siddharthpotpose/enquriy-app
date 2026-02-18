@@ -26,7 +26,7 @@ export class EquiryDetails {
   isConvertedT = signal<any>(0);
   isConvertedF = signal<any>(0);
   page = signal<any>(1);
-  pageSize = signal<any>(12);
+  pageSize = signal<any>(10);
 
 
   constructor(private service: AllServices, private alertService: AlertService, private cdr: ChangeDetectorRef) { }
@@ -309,7 +309,7 @@ export class EquiryDetails {
   // Refresh/Reset all filters
   refreshData() {
     this.searchTerm.set('');
-    this.pageSize.set(12);
+    this.pageSize.set(10);
     this.page.set(1);
     this.allData
     this.setStatusFilter('all');
@@ -327,6 +327,16 @@ export class EquiryDetails {
       this.cdr.markForCheck();
       this.isLoading.set(false);
     }, 300);
+  }
+
+  getPageStart(): number {
+    const total = this.totalRecords();
+    if (total === 0) return 0;
+    return (this.page() - 1) * this.pageSize() + 1;
+  }
+
+  getPageEnd(): number {
+    return Math.min(this.page() * this.pageSize(), this.totalRecords());
   }
 
 

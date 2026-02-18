@@ -73,6 +73,8 @@ export class EnquiryCategory {
 
   // Method to get page start (alternative approach)
   getPageStart(): number {
+    const total = this.totalRecords();
+    if (total === 0) return 0;
     return (this.page() - 1) * this.pageSize() + 1;
   }
 

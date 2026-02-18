@@ -221,7 +221,7 @@
                 @for (item of pagedData(); track $index) {
                 <tr class="table-row">
                   <td class="text-center">
-                    <span class="serial-number">{{$index + 1}}</span>
+                    <span class="serial-number">{{((page() - 1) * pageSize()) + $index + 1}}</span>
                   </td>
                   <td>
                     <div class="category-info">
@@ -277,23 +277,16 @@
           </div>
         </div>
 
-        @if(categoryDataRes().length > 0){
+        @if(totalRecords() > 0){
         <div class="table-footer p-2">
-          <div class="d-flex justify-content-center align-items-center flex-wrap gap-2">
-            <div class="footer-info">
-              <!-- Pagination -->
-              @if (totalRecords() > 0) {
-              <div class="pagination-wrapper">
-                <ngb-pagination [collectionSize]="totalRecords()" [pageSize]="pageSize()" [page]="page()"
-                  (pageChange)="onPageChange($event)" [maxSize]="2" [boundaryLinks]="true">
-                </ngb-pagination>
-              </div>
-              }
+          <div class="pagination-row">
+            <div class="pagination-info">
+              Showing {{ getPageStart() }} to {{ getPageEnd() }} of {{ totalRecords() }} entries
             </div>
-            <div class="footer-pagination">
-              <span class="text-muted small">
-                Showing {{ getPageStart() }} to {{ getPageEnd() }} of {{ totalRecords() }} entries
-              </span>
+            <div class="pagination-controls">
+              <ngb-pagination [collectionSize]="totalRecords()" [pageSize]="pageSize()" [page]="page()"
+                (pageChange)="onPageChange($event)" [maxSize]="5" [rotate]="true" [boundaryLinks]="true">
+              </ngb-pagination>
             </div>
           </div>
         </div>

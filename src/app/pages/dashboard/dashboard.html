@@ -2,7 +2,7 @@
   <!-- Summary Cards Row -->
   <div class="summary-row">
     <!-- Total Card -->
-    <div class="summary-card total" [class.active]="statusFilter === 'all' && categoryFilter === 'all'" (click)="clearFilters()">
+    <div class="summary-card total" [class.active]="statusFilter() === 'all'" (click)="clearFilters()">
       <div class="card-inner">
         <div class="card-icon">
           <i class="fa-solid fa-layer-group"></i>
@@ -18,7 +18,7 @@
     </div>
 
     <!-- Pending Card -->
-    <div class="summary-card pending" [class.active]="statusFilter === 'Pending'" (click)="statusFilter = 'Pending'">
+    <div class="summary-card pending" [class.active]="statusFilter() === 'Pending'" (click)="setStatusFilter('Pending')">
       <div class="card-inner">
         <div class="card-icon">
           <i class="fa-solid fa-clock"></i>
@@ -37,7 +37,7 @@
  
 
 
-        <div class="summary-card pending" [class.active]="statusFilter === 'In Progress'" (click)="statusFilter = 'In Progress'">
+        <div class="summary-card pending" [class.active]="statusFilter() === 'In Progress'" (click)="setStatusFilter('In Progress')">
       <div class="card-inner">
         <div class="card-icon">
         <i class="fa-solid fa-spinner fa-spin"></i>
@@ -53,7 +53,7 @@
     </div>
 
     <!-- Completed Card -->
-    <div class="summary-card completed" [class.active]="statusFilter === 'Completed'" (click)="statusFilter = 'Completed'">
+    <div class="summary-card completed" [class.active]="statusFilter() === 'Completed'" (click)="setStatusFilter('Completed')">
       <div class="card-inner">
         <div class="card-icon">
           <i class="fa-solid fa-check-circle"></i>
@@ -124,21 +124,24 @@
       <div class="table-actions">
         <div class="search-input">
           <i class="fa-solid fa-search"></i>
-          <input type="text" placeholder="Search..." [(ngModel)]="searchTerm">
+          <input type="text" placeholder="Search..." [ngModel]="searchTerm()" (ngModelChange)="setSearchTerm($event)">
         </div>
-        <select class="filter-select" [(ngModel)]="statusFilter">
-          <option value="all">All Status</option>
-          @for(s of statuses(); track s.statusId){
-            <option [value]="s.statusName">{{s.statusName}}</option>
+        <select class="filter-select" [ngModel]="customerFilter()" (ngModelChange)="setCustomerFilter($event)">
+          <option value="all">All Customers</option>
+          @for(c of customerOptions(); track c){
+            <option [value]="c">{{c}}</option>
           }
         </select>
-        <select class="filter-select" [(ngModel)]="categoryFilter">
-          <option value="all">All Categories</option>
-          @for(c of categories(); track c.categoryId){
-            <option [value]="c.categoryName">{{c.categoryName}}</option>
+        <select class="filter-select" [ngModel]="enquiryTypeFilter()" (ngModelChange)="setEnquiryTypeFilter($event)">
+          <option value="all">All Enquiry Types</option>
+          @for(t of enquiryTypeOptions(); track t){
+            <option [value]="t">{{t}}</option>
           }
         </select>
-        @if(statusFilter !== 'all' || categoryFilter !== 'all' || searchTerm){
+        <button class="btn-clear" (click)="refreshData()" title="Refresh">
+          <i class="fa-solid fa-rotate-right"></i> Refresh
+        </button>
+        @if(statusFilter() !== 'all' || customerFilter() !== 'all' || enquiryTypeFilter() !== 'all' || searchTerm()){
           <button class="btn-clear" (click)="clearFilters()">
             <i class="fa-solid fa-times"></i> Clear
           </button>
@@ -152,12 +155,12 @@
         <thead>
           <tr>
             <th class="text-center">#</th>
-            <th>Enquiry No</th>
             <th>Customer</th>
+            <th>Enquiry Type</th>
             <th>Email</th>
             <th>Phone</th>
-            <th>Category</th>
-            <th>Status</th>
+            <th>Enquiry Date</th>
+            <th>Follow Up Date</th>
             <th class="text-center">Action</th>
           </tr>
         </thead>
@@ -184,10 +187,10 @@
               </td>
             </tr>
           } @else {
-            @for(enquiry of filteredEnquiries(); track enquiry.enquiryId; let i = $index){
+            @for(enquiry of pagedEnquiries(); track enquiry.enquiryId; let i = $index){
               <tr>
                 <td class="text-center text-muted">{{(page - 1) * pageSize + i + 1}}</td>
-                <td class="fw-bold text-primary">{{enquiry.enquiryNo}}</td>
+             
                 <td>
                   <div class="customer-info">
                     <div class="customer-avatar">
@@ -196,6 +199,7 @@
                     <span>{{enquiry.customerName}}</span>
                   </div>
                 </td>
+                   <td class="fw-bold text-primary">{{enquiry.enquiryType}}</td>
                 <td>
                   <a [href]="'mailto:' + enquiry.customerEmail" class="text-decoration-none">
                     {{enquiry.customerEmail}}
@@ -207,13 +211,10 @@
                   </a>
                 </td>
                 <td>
-                  <span class="category-chip">{{enquiry.categoryName}}</span>
+                  <span class="category-chip">{{enquiry.enquiryDate | date : 'dd-MMM-yyyy'}}</span>
                 </td>
                 <td>
-                  <span class="status-chip" [ngClass]="getStatusColor(enquiry.statusName)">
-                    <i class="fa-solid" [ngClass]="getStatusIcon(enquiry.statusName)"></i>
-                    {{enquiry.statusName}}
-                  </span>
+                  <span class="category-chip">{{enquiry.followUpDate | date : 'dd-MMM-yyyy'}}</span>
                 </td>
                 <td class="text-center">
                   <button class="btn-view" (click)="viewEnquiryDetails(enquiry)" title="View Details">
@@ -228,17 +229,17 @@
     </div>
 
     <!-- Pagination -->
-    @if(filteredEnquiries().length > 0){
+    @if(getFilteredTotal() > 0){
       <div class="pagination-row">
         <div class="pagination-info">
-          Showing {{getPageStart()}} to {{getPageEnd()}} of {{totalRecords}} entries
+          Showing {{getPageStart()}} to {{getPageEnd()}} of {{getFilteredTotal()}} entries
         </div>
         <div class="pagination-controls">
           <ngb-pagination
-            [collectionSize]="totalRecords"
+            [collectionSize]="getFilteredTotal()"
             [(page)]="page"
             [pageSize]="pageSize"
-            [maxSize]="5"
+            [maxSize]="2"
             [rotate]="true"
             [boundaryLinks]="true"
             (pageChange)="onPageChange($event)">

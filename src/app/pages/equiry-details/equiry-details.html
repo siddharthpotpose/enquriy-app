@@ -69,7 +69,7 @@
         </label>
         <select class="form-select form-select-sm" id="pageSize" style="width: auto;" [ngModel]="pageSize()"
           (ngModelChange)="setPageSize($event)">
-          <option selected [value]="12">12</option>
+          <option selected [value]="10">10</option>
           <option [value]="20">20</option>
           <option [value]="50">50</option>
           <option [value]="100">100</option>
@@ -124,7 +124,7 @@
 
       <div class="enquiry-card">
         <div class="card-header-custom">
-          <div class="user-avatar">{{$index + 1}}</div>
+          <div class="user-avatar">{{((page() - 1) * pageSize()) + $index + 1}}</div>
           <div class="user-info">
             <h5 class="user-name">{{item.customerName ? item.customerName : '-'}}</h5>
             <span class="enquiry-id">{{item.enquiryId ? item.enquiryId : '-'}}</span>
@@ -167,10 +167,15 @@
 
   <!-- Pagination -->
   @if (totalRecords() > 0) {
-  <div class="pagination-wrapper mt-4">
-    <ngb-pagination [collectionSize]="totalRecords()" [pageSize]="pageSize()" [page]="page()"
-      (pageChange)="onPageChange($event)" [maxSize]="2" [boundaryLinks]="true">
-    </ngb-pagination>
+  <div class="pagination-row mt-4">
+    <div class="pagination-info">
+      Showing {{getPageStart()}} to {{getPageEnd()}} of {{totalRecords()}} entries
+    </div>
+    <div class="pagination-controls">
+      <ngb-pagination [collectionSize]="totalRecords()" [pageSize]="pageSize()" [page]="page()"
+        (pageChange)="onPageChange($event)" [maxSize]="2" [rotate]="true" [boundaryLinks]="true">
+      </ngb-pagination>
+    </div>
   </div>
   }
 
@@ -285,7 +290,7 @@
 </div>
 
 
-<!-- Delete Confirmation Modal -->
+<!-- Delete Confirmation Modal --> 
 <div class="modal-overlay" *ngIf="showDeleteModal()" (click)="closeDeleteModal()">
   <div class="delete-modal" (click)="$event.stopPropagation()">
     <div class="modal-header">

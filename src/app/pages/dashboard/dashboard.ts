@@ -1,5 +1,5 @@
 import { Component, inject, signal, computed, OnInit, AfterViewInit, ViewChild, ElementRef, OnDestroy } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AllServices } from '../service/all-services';
@@ -10,7 +10,7 @@ import * as am5percent from '@amcharts/amcharts5/percent';
 
 @Component({
   selector: 'app-dashboard',
-  imports: [CommonModule, FormsModule, NgbPagination],
+  imports: [CommonModule, FormsModule, NgbPagination,DatePipe],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.css',
 })
@@ -36,9 +36,10 @@ export class Dashboard implements OnInit, AfterViewInit, OnDestroy {
   totalRecords = 0;
 
   // Search & Filter
-  searchTerm = '';
-  statusFilter = 'all';
-  categoryFilter = 'all';
+  searchTerm = signal<string>('');
+  statusFilter = signal<string>('all');
+  customerFilter = signal<string>('all');
+  enquiryTypeFilter = signal<string>('all');
 
   // Chart data - plain arrays for template
   statusChartData: any[] = [];
@@ -49,9 +50,10 @@ export class Dashboard implements OnInit, AfterViewInit, OnDestroy {
 
   // Computed values for filtered data
   filteredEnquiries = computed(() => {
-    const search = this.searchTerm.toLowerCase().trim();
-    const status = this.statusFilter;
-    const category = this.categoryFilter;
+    const search = this.searchTerm().toLowerCase().trim();
+    const status = this.statusFilter();
+    const customer = this.customerFilter();
+    const enquiryType = this.enquiryTypeFilter();
     const data = this.enquiries();
 
     let filtered = data;
@@ -69,8 +71,12 @@ export class Dashboard implements OnInit, AfterViewInit, OnDestroy {
       filtered = filtered.filter(item => item.statusName === status);
     }
 
-    if (category !== 'all') {
-      filtered = filtered.filter(item => item.categoryName === category);
+    if (customer !== 'all') {
+      filtered = filtered.filter(item => item.customerName === customer);
+    }
+
+    if (enquiryType !== 'all') {
+      filtered = filtered.filter(item => item.enquiryType === enquiryType);
     }
 
     return filtered;
@@ -162,7 +168,7 @@ export class Dashboard implements OnInit, AfterViewInit, OnDestroy {
       next: (res: any) => {
         const data = res?.data || [];
         this.enquiries.set(data);
-        this.totalRecords = res?.totalRecords || data.length || 0;
+        this.totalRecords = data.length || 0;
         this.prepareChartData();
         this.isLoading.set(false);
         
@@ -324,9 +330,9 @@ export class Dashboard implements OnInit, AfterViewInit, OnDestroy {
     series.data.setAll(this.categoryChartData);
     series.columns.template.setAll({ width: am5.percent(60) });
 
-    series.bullets.push(function(this: any) {
-      return am5.Bullet.new(this.root, {
-        sprite: am5.Label.new(this.root, {
+    series.bullets.push(() => {
+      return am5.Bullet.new(root, {
+        sprite: am5.Label.new(root, {
           text: '{valueY}',
           fontSize: 11,
           fontWeight: '600',
@@ -345,21 +351,83 @@ export class Dashboard implements OnInit, AfterViewInit, OnDestroy {
 
   onPageChange(newPage: number) {
     this.page = newPage;
-    this.loadDashboardData();
   }
 
   getPageStart(): number {
+    const total = this.getFilteredTotal();
+    if (total === 0) return 0;
     return (this.page - 1) * this.pageSize + 1;
   }
 
   getPageEnd(): number {
-    return Math.min(this.page * this.pageSize, this.totalRecords);
+    return Math.min(this.page * this.pageSize, this.getFilteredTotal());
+  }
+
+  getFilteredTotal(): number {
+    return this.filteredEnquiries().length;
+  }
+
+  pagedEnquiries(): any[] {
+    const filtered = this.filteredEnquiries();
+    const totalPages = Math.max(1, Math.ceil(filtered.length / this.pageSize));
+
+    if (this.page > totalPages) {
+      this.page = totalPages;
+    }
+
+    const start = (this.page - 1) * this.pageSize;
+    const end = start + this.pageSize;
+    return filtered.slice(start, end);
   }
 
   clearFilters() {
-    this.searchTerm = '';
-    this.statusFilter = 'all';
-    this.categoryFilter = 'all';
+    this.searchTerm.set('');
+    this.statusFilter.set('all');
+    this.customerFilter.set('all');
+    this.enquiryTypeFilter.set('all');
+    this.page = 1;
+  }
+
+  setStatusFilter(status: string) {
+    this.statusFilter.set(status);
+    this.page = 1;
+  }
+
+  setCustomerFilter(customer: string) {
+    this.customerFilter.set(customer);
+    this.page = 1;
+  }
+
+  setEnquiryTypeFilter(enquiryType: string) {
+    this.enquiryTypeFilter.set(enquiryType);
+    this.page = 1;
+  }
+
+  setSearchTerm(term: string) {
+    this.searchTerm.set(term);
+    this.page = 1;
+  }
+
+  refreshData() {
+    this.clearFilters();
+    this.loadDashboardData();
+    this.page = 1;
+  }
+
+  customerOptions(): string[] {
+    return [...new Set(
+      this.enquiries()
+        .map(item => item.customerName)
+        .filter((name: string) => !!name)
+    )].sort();
+  }
+
+  enquiryTypeOptions(): string[] {
+    return [...new Set(
+      this.enquiries()
+        .map(item => item.enquiryType)
+        .filter((type: string) => !!type)
+    )].sort();
   }
 
   viewEnquiryDetails(enquiry: any) {
